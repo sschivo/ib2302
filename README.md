@@ -42,14 +42,21 @@ Om code uit te wisselen&mdash;zowel van de docent naar de student (aan het begin
 
  1. Lees GitHub's [Git Handbook](https://guides.github.com/introduction/git-handbook/) voor een eerste introductie met ``git`` en GitHub. (Het doornemen van gelinkte content is niet nodig.)
  1. Creëer een account op [GitHub](https://github.com) en log in.
- 1. [Fork](https://guides.github.com/activities/forking/)&mdash;clonen etc. is nog niet nodig&mdash;deze repository (https://github.com/sungshik/ib2302).
- 1. Maak de geforkte repository [private](https://help.github.com/en/github/administering-a-repository/setting-repository-visibility) zodat deze niet zichtbaar is voor derden.
+ 1. [Creëer een repository](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-new-repository) (sla alle optionele stappen over). Instellingen:
+       * Repository name: ``ib2302``
+       * Visibility: ``Private``
+ 1. (Negeer de "Quick setup" pagina.)
  
 ### Eclipse
 
  1. Start de VM.
  1. Open een terminal en voer uit:
     ```
+    git clone --bare https://github.com/sungshik/ib2302.git
+    cd ib2302.git
+    git push --mirror https://github.com/<user>/ib2302.git
+    cd ..
+    rm -rf ib2302.git
     git clone https://github.com/<user>/ib2302.git
     ```
     **NB:** Vervang ``<user>`` door je eigen accountnaam op GitHub.
@@ -372,6 +379,10 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
     git commit -am '<beschrijving-van-de-wijzigingen>'
     git push
     ```
+<<<<<<< HEAD
  2. Op GitHub: Voeg ``luc-edixhoven`` toe als [collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) aan de geforkte repository. Dit is het gebruikersaccount van een van de docenten.
+=======
+ 2. Op GitHub: Voeg ``luc-edixhoven`` toe als [collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) aan de repository. Dit is het gebruikersaccount van een van de docenten.
+>>>>>>> upstream/master
 
  3. Op yOUlearn: Verstuur het formulier onder ``Cursus`` > ``Programmeeropdrachten``.
