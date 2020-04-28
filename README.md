@@ -379,10 +379,6 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
     git commit -am '<beschrijving-van-de-wijzigingen>'
     git push
     ```
-<<<<<<< HEAD
  2. Op GitHub: Voeg ``luc-edixhoven`` toe als [collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) aan de geforkte repository. Dit is het gebruikersaccount van een van de docenten.
-=======
- 2. Op GitHub: Voeg ``luc-edixhoven`` toe als [collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) aan de repository. Dit is het gebruikersaccount van een van de docenten.
->>>>>>> upstream/master
 
  3. Op yOUlearn: Verstuur het formulier onder ``Cursus`` > ``Programmeeropdrachten``.
