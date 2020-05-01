@@ -166,6 +166,8 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
      * Als een proces verliezer is in de huidige ronde, maar geen winnaar, dan doet het niet mee aan de volgende ronde. In dit geval is het proces verliezer van het hele spel en print het ``false``. Wanneer het proces in het vervolg een bericht ontvangt, stuurt het datzelfde bericht terug naar de afzender.
      * Als een proces geen verliezer is in de huidige ronde, en geen winnaar, dan doet het mee aan de volgende ronde.
 
+ * Neem aan dat kanalen de volgorde waarin berichten verstuurd zijn, behouden (FIFO).
+
  * Een complicatie is het fenomeen dat een proces "voor kan lopen" op andere processen. De volgende executie is, bijvoorbeeld, mogelijk:
      1. Guldo, in ronde 1, verstuurt ``Item.ROCK`` naar Recoome en Burter.
      1. Recoome, in ronde 1, verstuurt ``Item.PAPER`` naar Guldo en Burter.
