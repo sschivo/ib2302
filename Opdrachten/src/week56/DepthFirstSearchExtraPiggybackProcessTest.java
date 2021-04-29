@@ -226,7 +226,7 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 			assertEquals(pssize, n.getChannel("p", "s").getContent().size());
 			assertEquals(prsize + 1, n.getChannel("p", "r").getContent().size());
 			
-			assertTrue(n.getChannel("p", "r").getContent().toArray()[16] instanceof TokenWithIdsMessage);
+			assertTrue(n.getChannel("p", "r").getContent().toArray()[0] instanceof TokenWithIdsMessage);
 			Set<String> visited = ((TokenWithIdsMessage) n.getChannel("p", "r").getContent().toArray()[0]).getIds();
 			assertEquals(3, visited.size());
 			assertTrue(visited.contains("p"));
