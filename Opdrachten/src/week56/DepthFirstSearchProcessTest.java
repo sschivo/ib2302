@@ -16,7 +16,7 @@ import framework.Network;
 
 class DepthFirstSearchProcessTest {
 	
-	// Initiator should initiate
+	// Initiator should not finish and should send a single token on init
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -39,6 +39,7 @@ class DepthFirstSearchProcessTest {
 		assertEquals(1, sum);
 	}
 
+	// Non-initiators should not finish and should not send anything on init
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -56,7 +57,7 @@ class DepthFirstSearchProcessTest {
 		assertEquals(0, sum);
 	}
 
-	// Initiator illegal message: throw
+	// Initiator illegal message type: throw exception
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -67,7 +68,7 @@ class DepthFirstSearchProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("r", "p")));
 	}
 
-	// Initiator receives, not all: forward
+	// Initiator receives token, but not from all neighbours: forward
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -100,7 +101,7 @@ class DepthFirstSearchProcessTest {
 		assertEquals(2, sum);
 	}
 
-	// Initiator receives, not all: do not finish
+	// Initiator receives token, but not from all neighbours: do not finish
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -117,7 +118,7 @@ class DepthFirstSearchProcessTest {
 		assertFalse(p.isPassive());
 	}
 
-	// Initiator does not forward through the same channel twice (repeat a few times)
+	// Initiator does not forward through the same channel twice
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator");
@@ -155,7 +156,7 @@ class DepthFirstSearchProcessTest {
 		}
 	}
 
-	// Initiator receives all: finish
+	// Initiator receives token from all neighbours: finish
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -175,7 +176,7 @@ class DepthFirstSearchProcessTest {
 		assertTrue(p.isPassive());
 	}
 
-	// Initiator receives when finished: throw
+	// Initiator receives token when finished: throw exception
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -191,7 +192,7 @@ class DepthFirstSearchProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new TokenMessage(), n.getChannel("q", "p")));
 	}
 
-	// Non-initiator illegal message: throw
+	// Non-initiator illegal message type: throw
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -202,7 +203,7 @@ class DepthFirstSearchProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(Message.DUMMY, n.getChannel("r", "q")));
 	}
 
-	// Non-initiator receives, not all: forward
+	// Non-initiator receives token, but not from all neighbours: forward
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -243,7 +244,7 @@ class DepthFirstSearchProcessTest {
 		}
 	}
 
-	// Non-initiator receives, not all: do not finish
+	// Non-initiator receives token, but not from all neighbours: do not finish
 	@Test
 	void receiveTest9() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -261,7 +262,7 @@ class DepthFirstSearchProcessTest {
 		assertFalse(q.isPassive());
 	}
 
-	// Non-initiator does not forward through the same channel twice (repeat a few times)
+	// Non-initiator does not forward through the same channel twice
 	@Test
 	void receiveTest10() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator");
@@ -296,7 +297,7 @@ class DepthFirstSearchProcessTest {
 		}
 	}
 
-	// Non-initiator only forwards to parent if only option (repeat a few times)
+	// Non-initiator only forwards to parent if only option
 	@Test
 	void receiveTest11() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator");
@@ -319,7 +320,7 @@ class DepthFirstSearchProcessTest {
 		assertEquals(1, n.getChannel("q0", "p").getContent().size());
 	}
 
-	// Non-initiator receives all: finish
+	// Non-initiator receives token from all neighbours: finish
 	@Test
 	void receiveTest12() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator");
@@ -342,7 +343,7 @@ class DepthFirstSearchProcessTest {
 		assertTrue(q.isPassive());
 	}
 
-	// Non-initiator receives when finished: throw
+	// Non-initiator receives token when finished: throw exception
 	@Test
 	void receiveTest13() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator q,r,s:week56.DepthFirstSearchNonInitiator").makeComplete();
@@ -358,7 +359,7 @@ class DepthFirstSearchProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(new TokenMessage(), n.getChannel("r", "q")));
 	}
 
-	// Initiator receives: if allowed, return to sender
+	// Initiator receives token: if allowed, return to sender
 	@Test
 	void receiveTest14() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator");
@@ -379,7 +380,7 @@ class DepthFirstSearchProcessTest {
 		}
 	}
 
-	// Non-initiator receives: if allowed, return to sender
+	// Non-initiator receives token: if allowed, return to sender
 	@Test
 	void receiveTest15() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator");
@@ -403,6 +404,7 @@ class DepthFirstSearchProcessTest {
 		}
 	}
 
+	// Simulate full run
 	@Test
 	void simulationTest1() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchInitiator");
@@ -418,7 +420,8 @@ class DepthFirstSearchProcessTest {
 			assertTrue(false);
 		}
 
-		// No output, check internal state
+		// No output, check internal state:
+		// All processes should have finished
 		assertTrue(((WaveProcess) n.getProcess("p")).isPassive());
 		for (int i = 0; i < 15; i++) {
 			assertTrue(((WaveProcess) n.getProcess("q" + i)).isPassive());

@@ -30,11 +30,11 @@ Per inschrijving heeft de student drie inleverpogingen. Als na de derde inleverp
 
 ### Virtual machine (VM)
 
+Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) aan. Het doel van de VM is om alle studenten te laten werken met hetzelfde besturingssysteem, dezelfde versie van Java, en dezelfde versie van Eclipse; dit maakt het oplossen van problemen door de docent, zodra de VM is geinstalleerd is (hieronder beschreven), een stuk eenvoudiger voor zowel de student als de docent. Hoewel sterk aangeraden, is het niet verplicht om de VM te gebruiken. Echter, de docent biedt geen ondersteuning bij installatie en configuratie van de benodigde tools (Java SDK, Eclipse, ``git``) buiten de VM.
+
  1. Download en installeer [VirtualBox](https://www.virtualbox.org).
  1. Download de [virtual machine](https://figshare.com/s/c8b2ec737ea0435de3f7).
  1. Importeer de VM in VirtualBox.
-
-**NB:** Hoewel sterk aangeraden, is het niet verplicht om de VM te gebruiken. Echter, de docent biedt geen ondersteuning bij installatie en configuratie van de benodigde tools (Java SDK, Eclipse, ``git``) buiten de VM.
 
 ### ``git`` en GitHub
 
@@ -72,7 +72,7 @@ Om code uit te wisselen&mdash;zowel van de docent naar de student (aan het begin
 
 ### Verstrekte code
 
-De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, ``week56``, ``week78``, en ``framework``. De eerste vijf packages komen overeen met de vijf opdrachten. Package ``framework`` is een kleine library waarmee gedistribueerde algoritmen kunnen worden geïmplementeerd. De belangrijkste klassen en interfaces op een rijtje:
+De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, ``week56``, ``week78``, en ``framework``. De eerste vijf packages komen overeen met de vijf opdrachten. Package ``framework`` is een kleine library waarmee gedistribueerde algoritmen kunnen worden geïmplementeerd. De benodigde klassen en interfaces op een rijtje:
 
  * Klasse ``Process`` representeert processen. Relevante methoden zijn:
     * ``p.getName()`` retourneert de naam van ``p``.
@@ -92,6 +92,8 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
  * Klasse ``Channel`` representeert kanalen tussen processen. Relevante methoden zijn:
     * ``c.getSender()`` retourneert het proces aan de ingang van het kanaal ``c``.
     * ``c.getReceiver()`` retourneert het proces aan de uitgang van het kanaal ``c``.
+
+   **NB:** Klasse ``Channel`` is al volledig geimplementeerd; de student hoeft hier zelf niets aan te doen. Het plaatsen van een bericht in een kanaal gebeurt als onderdeel van methode ``send`` van klasse ``Process``.
  
  * Interface ``Message`` representeert berichten. De interface specificeert geen methoden; klassen die de interface implementeren zijn vrij om zelf relevante attributen en methoden aan te bieden.
  
@@ -148,7 +150,7 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 
  * Het is de bedoeling om Cheating Guldo, wiens lokaal transitiesysteem is besproken tijdens Hoorcollege 1, te veralgemeniseren, volgens de volgende beschrijving:
     * Een algemeen valsspelend proces ``p`` ontvangt eerst van elk ander proces een item.
-    * Wanneer ``p`` van elk ander proces een item heeft ontvangen, kiest ``p`` een eigen item zodanig dat het: in ieder geval niet verliest; en, wint als het kan winnen.
+    * Wanneer ``p`` van elk ander proces een item heeft ontvangen, kiest ``p`` een eigen item zodanig dat het: in ieder geval niet verliest; en, wint als het kan winnen. (Met meer dan twee spelers kan het zijn dat ``p`` geen item kan kiezen zodanig dat hij wint, maar ``p`` kan wel voorkomen dat hij verliest.)
     * Vervolgens verstuurt ``p`` zijn gekozen item naar elk ander proces.
     * Tenslotte print ``p``, zoals eerlijke processen, ``<win> <lose>`` (gebruik methode ``print`` van superklasse ``framework.Process``).
 

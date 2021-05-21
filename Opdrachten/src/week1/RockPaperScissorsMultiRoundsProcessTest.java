@@ -20,7 +20,7 @@ import framework.ListChannel;
 
 class RockPaperScissorsMultiRoundsProcessTest {
 
-	// Init should send n messages
+	// Should send a message to every opponent on init
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p,q,r,s:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -33,7 +33,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(1, n.getChannel("p", "s").getContent().size());
 	}
 
-	// Not instance of RPSMessage
+	// Should throw exception on receiving illegal message type
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p,q:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -44,6 +44,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("q", "p")));
 	}
 
+	// Should send a second message (start second round) after receiving from every opponent (and not losing)
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p,q,r,s:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -61,6 +62,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(2, n.getChannel("p", "q").getContent().size());
 	}
 
+	// Can handle messages from one round ahead
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p,q,r,s:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -74,6 +76,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		receiveOrCatch(p, new RockPaperScissorsMessage(Item.PAPER), n.getChannel("r", "p"));
 		assertEquals(1, n.getChannel("p", "q").getContent().size());
 
+		// message from second round of q: should not start second round of p yet
 		receiveOrCatch(p, new RockPaperScissorsMessage(Item.ROCK), n.getChannel("q", "p"));
 		assertEquals(1, n.getChannel("p", "q").getContent().size());
 
@@ -81,6 +84,8 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(2, n.getChannel("p", "q").getContent().size());
 	}
 
+	// Should play multiple rounds (n = 2)
+	// Test returns p's own message every time, so p and q play a draw
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p,q:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -103,6 +108,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(4, pq.getContent().size());
 	}
 
+	// Should not receive messages from two rounds ahead
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p,q,r:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -115,6 +121,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new RockPaperScissorsMessage(Item.ROCK), n.getChannel("q", "p")));
 	}
 
+	// Should only start a new round after receiving from all opponents (n = 4, three rounds)
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p,q,r,s:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -137,6 +144,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(3, n.getChannel("p", "q").getContent().size());
 	}
 
+	// Same as receiveTest6 but different order
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true, "p,q,r,s:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -160,6 +168,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(3, n.getChannel("p", "q").getContent().size());
 	}
 
+	// Should not receive messages from two rounds ahead (larger example)
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true, "p,q,r,s:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -179,6 +188,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new RockPaperScissorsMessage(Item.ROCK), n.getChannel("q", "p")));
 	}
 
+	// Same as receiveTest6 but different order and with a third-round message
 	@Test
 	void receiveTest9() {
 		Network n = Network.parse(true, "p,q,r,s:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -205,7 +215,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(3, n.getChannel("p", "q").getContent().size());
 	}
 
-	// Force loss and assert passiveness
+	// Force loss and check that player stops participating (i.e., only plays draws) (n = 2)
 	@Test
 	void passiveTest1() {
 		Network n = Network.parse(true, "p,q:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -239,7 +249,7 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(Item.SCISSORS, ((RockPaperScissorsMessage) ((ArrayList<Message>) pq.getContent()).get(3)).getItem());
 	}
 
-	// Force win and assert termination
+	// Force win and assert termination (n = 2)
 	@Test
 	void terminationTest1() {
 		Network n = Network.parse(true, "p,q:week1.RockPaperScissorsMultiRoundsProcess").makeComplete();
@@ -261,7 +271,8 @@ class RockPaperScissorsMultiRoundsProcessTest {
 		assertEquals(1, pq.getContent().size());
 	}
 
-	// Note that this test may actually fail once in a while on a correct implementation, but the probability is very low.
+	// Simulate a full run
+	// (Note that the test will also fail if there are only draws for 10000 iterations or so, but the probability of this happening is negligable.)
 	@Test
 	void simulationTest1() {
 		Network n = new Network(true);

@@ -16,7 +16,7 @@ import framework.Network;
 
 class LaiYangProcessTest {
 	
-	// Check that initiator actually initiates.
+	// Initiated initiator should send messages
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -34,7 +34,7 @@ class LaiYangProcessTest {
 		assertTrue(pr.iterator().next() instanceof LaiYangControlMessage);
 	}
 
-	// Non-initiators should not have done anything.
+	// Initiated non-initiators should not send messages
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -47,7 +47,7 @@ class LaiYangProcessTest {
 		assertEquals(0, n.getChannel("q", "r").getContent().size());
 	}
 
-	// Illegal message type
+	// Throw exception on illegal message type
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -62,7 +62,7 @@ class LaiYangProcessTest {
 	}
 
 	// ===== Control messages =====
-	// Double receive
+	// Throw exception on double receive of control message
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -74,7 +74,7 @@ class LaiYangProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new LaiYangControlMessage(0), n.getChannel("q", "p")));
 	}
 
-	// Receive when finished
+	// Throw exception on receive of control message when finished
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -89,7 +89,7 @@ class LaiYangProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new LaiYangControlMessage(0), n.getChannel("q", "p")));
 	}
 
-	// If not started, start
+	// If not started, start on control message
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -103,7 +103,7 @@ class LaiYangProcessTest {
 		assertTrue(q.hasStarted());
 	}
 
-	// If not received all, do not finish
+	// If not received all control messages, do not finish
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -117,7 +117,7 @@ class LaiYangProcessTest {
 		assertFalse(p.hasFinished());
 	}
 
-	// If received all but not all corresponding basic messages, do not finish
+	// If received all control messages but not all corresponding basic messages, do not finish
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -134,7 +134,7 @@ class LaiYangProcessTest {
 		assertFalse(p.hasFinished());
 	}
 
-	// If received all and all corresponding basic messages, finish
+	// If received all control messages and all corresponding basic messages, finish
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -151,6 +151,8 @@ class LaiYangProcessTest {
 		assertTrue(p.hasFinished());
 	}
 
+	// If received all control messages and all corresponding basic messages, finish
+	// (Bigger example)
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -173,6 +175,8 @@ class LaiYangProcessTest {
 		assertTrue(p.hasFinished());
 	}
 
+	// If received all control messages and all corresponding basic messages, finish
+	// (Bigger example)
 	@Test
 	void receiveTest9() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -230,7 +234,7 @@ class LaiYangProcessTest {
 		assertFalse(q.hasStarted());
 	}
 
-	// If tag false and finished, throw
+	// If tag false and finished, throw exception
 	@Test
 	void receiveTest12() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();

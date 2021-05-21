@@ -1,3 +1,4 @@
 git remote add upstream https://github.com/sungshik/da-pract.git
 git fetch upstream master
-git merge --allow-unrelated-histories --squash upstream/master
+git merge --allow-unrelated-histories --squash upstream/master --strategy-option=theirs
+git commit -am 'Pulled from upstream'

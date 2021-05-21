@@ -15,7 +15,7 @@ import framework.Network;
 
 class RingProcessTest {
 
-	// Initiator should initiate
+	// Initiator should not finish and should send a message on init
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -31,6 +31,7 @@ class RingProcessTest {
 		assertTrue(pq.iterator().next() instanceof TokenMessage);
 	}
 
+	// Non-initiator should not finish and should not send a message on init
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -44,7 +45,7 @@ class RingProcessTest {
 		assertEquals(0, qr.size());
 	}
 
-	// Initiator illegal message: throw
+	// Initiator illegal message type: throw exception
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -55,7 +56,7 @@ class RingProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("r", "p")));
 	}
 
-	// Initiator double receive: throw
+	// Initiator double receive: throw exception
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -82,7 +83,7 @@ class RingProcessTest {
 		assertTrue(p.isPassive());
 	}
 
-	// Non-initiator illegal message: throw
+	// Non-initiator illegal message type: throw exception
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -93,7 +94,7 @@ class RingProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(Message.DUMMY, n.getChannel("p", "q")));
 	}
 
-	// Non-initiator double receive: throw
+	// Non-initiator double receive: throw exception
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -122,6 +123,7 @@ class RingProcessTest {
 		assertTrue(q.isPassive());
 	}
 
+	// Simulate full run
 	@Test
 	void simulationTest1() {
 		Network n = Network.parse(true, "p:week56.RingInitiator");
@@ -137,7 +139,8 @@ class RingProcessTest {
 			assertTrue(false);
 		}
 
-		// No output, check internal state
+		// No output, check internal state:
+		// All processes should have finished
 		assertTrue(((WaveProcess) n.getProcess("p")).isPassive());
 		for (int i = 0; i < 20; i++) {
 			assertTrue(((WaveProcess) n.getProcess("q" + i)).isPassive());

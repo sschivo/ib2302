@@ -16,7 +16,7 @@ import framework.Network;
 
 class ChandyLamportProcessTest {
 	
-	// Check that initiator actually initiates.
+	// Initiated initiator should send messages
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -34,7 +34,7 @@ class ChandyLamportProcessTest {
 		assertTrue(pr.iterator().next() instanceof ChandyLamportControlMessage);
 	}
 
-	// Non-initiators should not have done anything.
+	// Initiated non-initiators should not send messages
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -47,7 +47,7 @@ class ChandyLamportProcessTest {
 		assertEquals(0, n.getChannel("q", "r").getContent().size());
 	}
 
-	// Illegal message type
+	// Throw exception on illegal message type
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -62,7 +62,7 @@ class ChandyLamportProcessTest {
 	}
 
 	// ===== Control messages =====
-	// Double receive
+	// Throw exception on double receive of control message
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -74,7 +74,7 @@ class ChandyLamportProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new ChandyLamportControlMessage(), n.getChannel("q", "p")));
 	}
 
-	// Receive when finished
+	// Throw exception on receive of control message when finished
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -89,7 +89,7 @@ class ChandyLamportProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new ChandyLamportControlMessage(), n.getChannel("q", "p")));
 	}
 
-	// If not started, start
+	// If not started, start on control message
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -103,7 +103,7 @@ class ChandyLamportProcessTest {
 		assertTrue(q.hasStarted());
 	}
 
-	// If received all, finish
+	// If received all control messages, finish
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -121,7 +121,7 @@ class ChandyLamportProcessTest {
 	}
 
 	// ===== Basic messages =====
-	// If not started, do not record
+	// If not started, do not record basic message
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -135,7 +135,7 @@ class ChandyLamportProcessTest {
 		assertEquals(0, q.getChannelState(n.getChannel("p", "q")).size());
 	}
 
-	// If finished, do not record
+	// If finished, do not record basic message
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -150,7 +150,7 @@ class ChandyLamportProcessTest {
 		assertEquals(0, p.getChannelState(n.getChannel("q", "p")).size());
 	}
 
-	// If received corresponding control message, do not record
+	// If received corresponding control message, do not record basic message
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
