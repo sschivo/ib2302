@@ -339,13 +339,13 @@ class BrachaTouegProcessTest {
 		assertEquals(1, n.getChannel("u", "w").getContent().size());
 		assertEquals(1, n.getChannel("u", "x").getContent().size());
 
-		// u receives grant from x: should return ack but not grant to v
+		// u receives grant from x: should return ack but not grant to v (requests is now 1)
 		receiveOrCatch(u, new GrantMessage(), n.getChannel("x", "u"));
 		assertEquals(2, n.getChannel("u", "x").getContent().size());
 		assertTrue(n.getChannel("u", "x").getContent().toArray()[1] instanceof AckMessage);
 		assertEquals(1, n.getChannel("u", "v").getContent().size());
 
-		// u receives grant from w: should return ack and grant to v
+		// u receives grant from w: should grant to v (requests is now 0) but not yet return ack to w (wait for ack from v first)
 		receiveOrCatch(u, new GrantMessage(), n.getChannel("w", "u"));
 		assertEquals(1, n.getChannel("u", "w").getContent().size());
 		assertEquals(2, n.getChannel("u", "v").getContent().size());
