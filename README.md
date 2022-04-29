@@ -45,7 +45,7 @@ Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) a
     ```
  1. Open Eclipse.
  1. Importeer de geclonede repository:
-     1. Klik: ``File`` (menubalk) > ``Import...`` > ``General`` > ``Import Projects into Workspace``
+     1. Klik: ``File`` (menubalk) > ``Import...`` > ``General`` > ``Existing Projects into Workspace``
      1. Bij ``Select root directory``, vul in: ``/home/ou/ib2302/Opdrachten``
      1. Klik: ``Finish``
 
