@@ -35,17 +35,6 @@ Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) a
  1. Download en installeer [VirtualBox](https://www.virtualbox.org).
  1. Download de [virtual machine](https://figshare.com/s/c8b2ec737ea0435de3f7).
  1. Importeer de VM in VirtualBox.
-
-### ``git`` en GitHub
-
-Om code uit te wisselen&mdash;zowel van de docent naar de student (aan het begin), als van de student naar de docent (aan het eind)&mdash;worden ``git`` en GitHub gebruikt. Hieronder volgt een reeks instructies, gericht op de student die nog geen kennis/ervaring heeft van/met ``git`` en GitHub; studenten met meer kennis/ervaring kunnen naar eigen inzicht stappen overslaan.
-
- 1. Lees GitHub's [Git Handbook](https://guides.github.com/introduction/git-handbook/) voor een eerste introductie met ``git`` en GitHub. (Het doornemen van gelinkte content is niet nodig.)
- 1. Creëer een account op [GitHub](https://github.com) en log in.
- 1. [Creëer een repository](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-new-repository) (sla alle optionele stappen over). Instellingen:
-       * Repository name: ``ib2302``
-       * Visibility: ``Private``
- 1. (Negeer de "Quick setup" pagina.)
  
 ### Eclipse
 
@@ -108,13 +97,6 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
  * Om unit-tests uit te voeren:
     * Open de klasse waarin de unit-tests gedefinieerd zijn.
     * Klik: ``Run`` (menubalk) > ``Coverage``
-
- * Het is raadzaam om regelmatig wijzigingen in de code te [``commit``-en en ``push``-en](https://guides.github.com/introduction/git-handbook/) in de repository; zo ontstaat een versiegeschiedenis en is het mogelijk om, indien nodig, eenvoudig een eerdere versie terug te halen. Bovendien verloopt de beoordeling van de opdrachten ook via ``git`` (meer details hierover in de laatste sectie van deze README). Om dit te doen, in de VM, open een terminal en voer uit:
-    ```
-    cd /home/ou/ib2302
-    git commit -am '<beschrijving-van-de-wijzigingen>'
-    git push
-    ```
 
 
 
