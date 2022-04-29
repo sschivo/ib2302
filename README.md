@@ -53,13 +53,7 @@ Om code uit te wisselen&mdash;zowel van de docent naar de student (aan het begin
  1. Open een terminal en voer uit:
     ```
     git clone --bare https://github.com/sungshik/ib2302.git
-    cd ib2302.git
-    git push --mirror https://github.com/<user>/ib2302.git
-    cd ..
-    rm -rf ib2302.git
-    git clone https://github.com/<user>/ib2302.git
     ```
-    **NB:** Vervang ``<user>`` door je eigen accountnaam op GitHub.
  1. Open Eclipse.
  1. Importeer de geclonede repository:
      1. Klik: ``File`` (menubalk) > ``Import...`` > ``General`` > ``Import Projects into Workspace``
@@ -377,12 +371,10 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 
  Wanneer alle unit-tests van alle opdrachten slagen, kunnen de implementaties ingeleverd worden, volgens deze stappen:
 
- 1. Zorg dat alle code is [ge-``commit`` en ge-``push``-t](https://guides.github.com/introduction/git-handbook/) in de repository. Om dit te doen, in de VM, open een terminal en voer uit:
+ 1. In de VM, open een temrinal en voer uit:
     ```
-    cd /home/ou/ib2302
-    git commit -am '<beschrijving-van-de-wijzigingen>'
-    git push
+    cd /home/ou
+    zip -r ib2302.zip ib2302
     ```
- 2. Op GitHub: Voeg ``luc-edixhoven`` toe als [collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) aan de repository. Dit is het gebruikersaccount van een van de docenten.
 
- 3. Op yOUlearn: Verstuur het formulier onder ``Cursus`` > ``Programmeeropdrachten``.
+ 2. Op yOUlearn, stuur de zojuist gemaakte ``/home/ou/ib2302.zip`` in met het formulier onder ``Cursus`` > ``Programmeeropdrachten``. (Het reflectieverslag kan los ingestuurd worden met het formulier onder ``Cursus`` > ``Reflectie``.)
