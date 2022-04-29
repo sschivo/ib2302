@@ -52,7 +52,7 @@ Om code uit te wisselen&mdash;zowel van de docent naar de student (aan het begin
  1. Start de VM.
  1. Open een terminal en voer uit:
     ```
-    git clone --bare https://github.com/sungshik/ib2302.git
+    git clone https://github.com/sungshik/ib2302.git
     ```
  1. Open Eclipse.
  1. Importeer de geclonede repository:
