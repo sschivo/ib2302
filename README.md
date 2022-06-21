@@ -353,10 +353,10 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 
  Wanneer alle unit-tests van alle opdrachten slagen, kunnen de implementaties ingeleverd worden, volgens deze stappen:
 
- 1. In de VM, open een temrinal en voer uit:
+ 1. In de VM, open een terminal en voer uit:
     ```
     cd /home/ou
-    zip -r ib2302.zip ib2302
+    tar -czf ib2302.tar.gz ib2302
     ```
 
  2. Op yOUlearn, stuur de zojuist gemaakte ``/home/ou/ib2302.zip`` in met het formulier onder ``Cursus`` > ``Programmeeropdrachten``. (Het reflectieverslag kan los ingestuurd worden met het formulier onder ``Cursus`` > ``Reflectie``.)
