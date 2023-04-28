@@ -35,6 +35,12 @@ Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) a
  1. Download en installeer [VirtualBox](https://www.virtualbox.org).
  1. Download de [virtual machine](https://figshare.com/s/c8b2ec737ea0435de3f7).
  1. Importeer de VM in VirtualBox.
+ 1. [Optioneel] Verander de keyboard layout naar `azerty`:
+     1. Start de VM.
+     1. Open een terminal en voer uit:
+        ```
+        setxkbmap fr
+        ```
  
 ### Eclipse
 
