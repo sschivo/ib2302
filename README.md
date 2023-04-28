@@ -39,7 +39,7 @@ Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) a
      1. Start de VM.
      1. Open een terminal en voer uit:
         ```
-        setxkbmap fr
+        setxkbmap be
         ```
  
 ### Eclipse
