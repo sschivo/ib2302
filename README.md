@@ -365,4 +365,4 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
     tar -czf ib2302.tar.gz ib2302
     ```
 
- 2. Op yOUlearn, stuur de zojuist gemaakte ``/home/ou/ib2302.tar.gz`` in met het formulier onder ``Cursus`` > ``Programmeeropdrachten``. (Het reflectieverslag kan los ingestuurd worden met het formulier onder ``Cursus`` > ``Reflectie``.)
+ 2. Op Brightspace, stuur de zojuist gemaakte ``/home/ou/ib2302.tar.gz`` in met het formulier onder ``Cursus`` > ``Inhoud`` > ``Programmeeropdrachten`` > ``Instructie``. Het reflectieverslag kan los ingestuurd worden per e-mail naar ``ssj@ou.nl`` en ``led@ou.nl``.
