@@ -96,7 +96,7 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
  
  * Het staat de student vrij om&mdash;geheel naar eigen inzicht&mdash;extra attributen, methoden, en zelfs klassen toe te voegen. Echter, testklassen (= alle klassen met een naam van de vorm ``...Test``) en de inhoud van package ``framework`` dienen ongewijzigd te blijven.
  
- * Bij twijfel over de opdrachtomschrijving: bestudeer de unit-tests. Deze bepalen uiteindelijk welk gedrag goed en fout is.
+ * Bij twijfel over de opdrachtomschrijving: bestudeer de unit-tests. Deze bepalen uiteindelijk welk gedrag goed en fout is. **Let op:** dit is geen "testontleedspel": je hoeft niet tegen de unit-tests te vechten totdat je uiteindelijk een pass krijgt! Als je het doel of het verwachte resultaat van een test niet snapt, schrijf dan in de Discussies en vraag de docenten.
 
  * De unit-tests controleren ook op **robuustheid** van implementaties van methode ``receive``; deze implementaties dienen gebruik te maken van ``IllegalReceiveException`` om ongewenste situaties te signaleren (bijvoorbeeld: de ontvangst van een tiende bericht in een ronde Steen-Papier-Schaar met slechts negen deelnemers). Echter, algemene eisen waaraan de implementatie van *elk* gedistribueerd algoritme moet voldoen, mogen weggelaten worden (bijvoorbeeld: bij een methodeaanroep ``p.receive(m,c)`` is het niet nodig om te controleren of ``m`` en ``c`` niet ``null`` zijn, en of ``c`` daadwerkelijk een inkomend kanaal is van ``p``).
  
