@@ -22,7 +22,7 @@ Wanneer **alle** opdrachten zijn gemaakt, kunnen deze collectief worden ingeleve
 
 Voor de duidelijkheid: elke unit-test die later bij de beoordeling door de docent wordt gebruikt, is een unit-test die eerder aan de student is verstrekt.
 
-Per inschrijving heeft de student drie inleverpogingen. Als na de derde inleverpoging nog geen voldoende is behaald, dan kan de student het vak niet meer succesvol afronden. Zie [yOUlearn](https://youlearn.ou.nl) voor deadlines.
+Per inschrijving heeft de student drie inleverpogingen. Als na de derde inleverpoging nog geen voldoende is behaald, dan kan de student het vak niet meer succesvol afronden. Zie [Brightspace](https://brightspace.ou.nl/) voor deadlines.
 
 
 
@@ -33,7 +33,7 @@ Per inschrijving heeft de student drie inleverpogingen. Als na de derde inleverp
 Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) aan. Het doel van de VM is om alle studenten te laten werken met hetzelfde besturingssysteem, dezelfde versie van Java, en dezelfde versie van Eclipse; dit maakt het oplossen van problemen door de docent, zodra de VM is geinstalleerd is (hieronder beschreven), een stuk eenvoudiger voor zowel de student als de docent. Hoewel sterk aangeraden, is het niet verplicht om de VM te gebruiken. Echter, de docent biedt geen ondersteuning bij installatie en configuratie van de benodigde tools (Java SDK, Eclipse, ``git``) buiten de VM.
 
  1. Download en installeer [VirtualBox](https://www.virtualbox.org).
- 1. Download de [virtual machine](https://figshare.com/s/c8b2ec737ea0435de3f7).
+ 1. Download de [virtual machine](https://openuniversiteit-my.sharepoint.com/:u:/g/personal/ssc_ou_nl/EV2zYWHzEhJIvF7RqJGjj_YBntjRxCoxyeQygzJ6quXV9w?e=MbS1Dt).
  1. Importeer de VM in VirtualBox.
  1. [Optioneel] Verander de keyboard layout naar `azerty`:
      1. Start de VM.
@@ -47,7 +47,7 @@ Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) a
  1. Start de VM.
  1. Open een terminal en voer uit:
     ```
-    git clone https://github.com/sungshik/ib2302.git
+    git clone https://github.com/sschivo/ib2302.git
     ```
  1. Open Eclipse.
  1. Importeer de geclonede repository:
@@ -365,4 +365,6 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
     tar -czf ib2302.tar.gz ib2302
     ```
 
- 2. Op Brightspace, stuur de zojuist gemaakte ``/home/ou/ib2302.tar.gz`` in met het formulier onder ``Cursus`` > ``Inhoud`` > ``Programmeeropdrachten`` > ``Instructie``. Het reflectieverslag kan los ingestuurd worden per e-mail naar ``ssj@ou.nl`` en ``led@ou.nl``.
+ 2. Op Brightspace, stuur de zojuist gemaakte ``/home/ou/ib2302.tar.gz`` in met het formulier onder ``Cursus`` > ``Inhoud`` > ``Programmeeropdrachten`` > ``Instructie``.
+ 
+ 3. Het reflectieverslag kan ingestuurd worden via Brighspace ``Cursus`` > ``Inhoud`` > ``Programmeeropdrachten`` > ``Reflectieverslag``.
