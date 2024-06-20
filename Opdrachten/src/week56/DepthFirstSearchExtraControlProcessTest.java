@@ -110,16 +110,21 @@ class DepthFirstSearchExtraControlProcessTest {
 
 		int child = -1;
 
-		// Receive all acks
+		// Figure out which process is the direct child of p
 		for (int i = 0; i < 100; i++) {
-			if (n.getChannel("p", "q" + i).getContent().size() != 0) {
-				receiveOrCatch(p, new AckMessage(), n.getChannel("q" + i, "p"));
-			} else {
+			if (n.getChannel("p", "q" + i).getContent().size() == 0) {
 				assertEquals(-1, child);
 				child = i;
 			}
 		}
 		assertNotEquals(-1, child);
+
+		// Receive all acks
+		for (int i = 0; i < 100; i++) {
+			if (i != child) {
+				receiveOrCatch(p, new AckMessage(), n.getChannel("q" + i, "p"));
+			}
+		}
 
 		// Receive all info
 		for (int i = 0; i < 100; i++) {
@@ -127,7 +132,7 @@ class DepthFirstSearchExtraControlProcessTest {
 				receiveOrCatch(p, new InfoMessage(), n.getChannel("q" + i, "p"));
 			}
 		}
-		
+
 		// Receive token back from child
 		receiveOrCatch(p, new TokenMessage(), n.getChannel("q" + child, "p"));
 
@@ -251,7 +256,7 @@ class DepthFirstSearchExtraControlProcessTest {
 		WaveProcess p = (WaveProcess) n.getProcess("p");
 		p.init();
 
-		// Determine which process is the current child; receive ack messages from all other neighbours
+		// Determine which process is the current child
 		int child = -1;
 		Set<Integer> children = new HashSet<Integer>();
 		for (int i = 0; i < 100; i++) {
@@ -259,7 +264,13 @@ class DepthFirstSearchExtraControlProcessTest {
 				assertEquals(-1, child);
 				child = i;
 				children.add(i);
-			} else {
+			}
+		}
+		assertEquals(1, children.size());
+
+		// Receive ack messages from all other neighbours
+		for (int i = 0; i < 100; i++) {
+			if (!children.contains(i)) {
 				receiveOrCatch(p, new AckMessage(), n.getChannel("q" + i, "p"));
 			}
 		}
@@ -300,7 +311,7 @@ class DepthFirstSearchExtraControlProcessTest {
 		// Receive first token, set parent
 		receiveOrCatch(q, new TokenMessage(), n.getChannel("p", "q0"));
 
-		// Determine which process is the current child; receive ack messages from all other neighbours
+		// Determine which process is the current child
 		int child = -1;
 		Set<Integer> children = new HashSet<Integer>();
 		for (int i = 1; i < 100; i++) {
@@ -308,12 +319,17 @@ class DepthFirstSearchExtraControlProcessTest {
 				assertEquals(-1, child);
 				child = i;
 				children.add(i);
-			} else {
-				receiveOrCatch(q, new AckMessage(), n.getChannel("q" + i, "q0"));
 			}
 		}
 		assertEquals(1, children.size());
-		
+
+		// Receive ack messages from all other neighbours
+		for (int i = 1; i < 100; i++) {
+			if (!children.contains(i)) {
+				receiveOrCatch(q, new AckMessage(), n.getChannel("q" + i, "q0"));
+			}
+		}
+
 		// Should forward on receive
 		for (int j = 0; j < 50; j++) {
 			// Receive token from the last child
@@ -350,16 +366,21 @@ class DepthFirstSearchExtraControlProcessTest {
 
 		int child = -1;
 
-		// Receive ack from all neighbours except child
+		// Figure out which neighbour is the current child
 		for (int i = 0; i < 100; i++) {
-			if (n.getChannel("p", "q" + i).getContent().size() != 0) {
-				receiveOrCatch(p, new AckMessage(), n.getChannel("q" + i, "p"));
-			} else {
+			if (n.getChannel("p", "q" + i).getContent().size() == 0) {
 				assertEquals(-1, child);
 				child = i;
 			}
 		}
 		assertNotEquals(-1, child);
+
+		// Receive ack from all neighbours except child
+		for (int i = 0; i < 100; i++) {
+			if (i != child) {
+				receiveOrCatch(p, new AckMessage(), n.getChannel("q" + i, "p"));
+			}
+		}
 
 		// Receive info from all neighbours except child
 		for (int i = 0; i < 100; i++) {
@@ -433,7 +454,7 @@ class DepthFirstSearchExtraControlProcessTest {
 				child = i;
 			}
 		}
-		
+
 		assertEquals(1, n.getChannel("p", "q" + nonchild).getContent().size());
 
 		// Receive info from chosen non-child. Should return ack.
