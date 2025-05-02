@@ -24,15 +24,22 @@ class BrachaTouegProcessTest {
 		q.addInRequest(pq);
 	}
 
-	// Example 5.3 (slides)
-	// Deadlocked
+	/**
+	 * Test network 1 is based on Example 5.3 (see book and slides).
+	 * Requests:
+	 *  u->w and x
+	 *  v->u and x
+	 *  w->v and x
+	 * Initiator: u
+	 * This network is deadlocked.
+	 */
 	Network network1() {		
 		Network n = Network.parse(true, "u:week78.BrachaTouegInitiator v,w,x:week78.BrachaTouegNonInitiator").makeComplete();
 		((BrachaTouegProcess) n.getProcess("u")).setRequests(2);
 		((BrachaTouegProcess) n.getProcess("v")).setRequests(2);
 		((BrachaTouegProcess) n.getProcess("w")).setRequests(2);
 		((BrachaTouegProcess) n.getProcess("x")).setRequests(0);
-		
+
 		addRequest(n, "u", "w");
 		addRequest(n, "u", "x");
 		addRequest(n, "v", "u");
@@ -43,8 +50,15 @@ class BrachaTouegProcessTest {
 		return n;
 	}
 
-	// Example 5.4 (slides)
-	// Free
+	/**
+	 * Test network 2 is based on Example 5.4 (see book and slides)
+	 * Requests:
+	 *  u->w and x
+	 *  v->u and x
+	 *  w->v or x
+	 * Initiator: u
+	 * This network is not deadlocked.
+	 */
 	Network network2() {
 		Network n = Network.parse(true, "u:week78.BrachaTouegInitiator v,w,x:week78.BrachaTouegNonInitiator").makeComplete();
 		((BrachaTouegProcess) n.getProcess("u")).setRequests(2);
@@ -62,8 +76,15 @@ class BrachaTouegProcessTest {
 		return n;
 	}
 
-	// Example 5.5 (slides)
-	// Free
+	/**
+	 * Test network 3 is based on Example 5.5 (see book and slides)
+	 * Requests:
+	 *  u->v and x
+	 *  v->w
+	 *  w->x
+	 * Initiator: u
+	 * This network is not deadlocked.
+	 */
 	Network network3() {
 		Network n = Network.parse(true, "u:week78.BrachaTouegInitiator v,w,x:week78.BrachaTouegNonInitiator").makeComplete();
 		((BrachaTouegProcess) n.getProcess("u")).setRequests(2);
@@ -79,8 +100,15 @@ class BrachaTouegProcessTest {
 		return n;
 	}
 
-	// Custom network
-	// Free (trivially)
+	/**
+	 * Test network 4 is custom-made
+	 * Requests:
+	 *  v->u
+	 *  w->u
+	 *  x->v and w
+	 * Initiator: u
+	 * This network is not deadlocked.
+	 */
 	Network network4() {
 		Network n = Network.parse(true, "u:week78.BrachaTouegInitiator v,w,x:week78.BrachaTouegNonInitiator").makeComplete();
 		((BrachaTouegProcess) n.getProcess("u")).setRequests(0);
@@ -96,7 +124,35 @@ class BrachaTouegProcessTest {
 		return n;
 	}
 
-	// Initiator initiates: should send notify to outgoing requests
+	/**
+	 * Test network 5 is based on exercise VIII-1
+	 * from the exercises on Chapter 5.
+	 * Requests:
+	 *  u->v and x
+	 *  v->w
+	 *  w->x
+	 * Initiator: u (here we use only the first solution, where u is chosen as initiator)
+	 */
+	Network network5() {
+		Network n = Network.parse(true, "u:week78.BrachaTouegInitiator v,w,x:week78.BrachaTouegNonInitiator").makeComplete();
+		((BrachaTouegProcess) n.getProcess("u")).setRequests(2);
+		((BrachaTouegProcess) n.getProcess("v")).setRequests(1);
+		((BrachaTouegProcess) n.getProcess("w")).setRequests(1);
+		((BrachaTouegProcess) n.getProcess("x")).setRequests(0);
+
+		addRequest(n, "u", "v");
+		addRequest(n, "u", "x");
+		addRequest(n, "v", "w");
+		addRequest(n, "w", "x");
+
+		return n;
+	}
+
+	/**
+	 * initTest1:
+	 * The initiator should send NOTIFY to all nodes
+	 * in its Out-list (list is non-empty).
+	 */
 	@Test
 	void initTest1() {
 		Network n = network1();
@@ -111,7 +167,11 @@ class BrachaTouegProcessTest {
 		assertTrue(n.getChannel("u", "x").getContent().iterator().next() instanceof NotifyMessage);
 	}
 
-	// Initiator initiates: should send grant (no outgoing requests)
+	/**
+	 * initTest2:
+	 * The initiator has an empty Out-list: should
+	 * directly start sending GRANTs.
+	 */
 	@Test
 	void initTest2() {
 		Network n = network4();
@@ -126,7 +186,10 @@ class BrachaTouegProcessTest {
 		assertTrue(n.getChannel("u", "w").getContent().iterator().next() instanceof GrantMessage);
 	}
 
-	// Non-initiator should not send anything on init
+	/**
+	 * initTest3:
+	 * A non-initiator does nothing upon init.
+	 */
 	@Test
 	void initTest3() {
 		Network n = network1();
@@ -139,7 +202,14 @@ class BrachaTouegProcessTest {
 		assertEquals(0, n.getChannel("v", "x").getContent().size());
 	}
 
-	// ===== Exceptions =====
+
+
+	/**
+	 * Message handling and exceptions.
+	 * By now it should be clear what the expectations are,
+	 * these are checked in the following tests.
+	 */
+
 	// Illegal message type
 	// Initiator
 	@Test
@@ -162,7 +232,7 @@ class BrachaTouegProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> v.receive(Message.DUMMY, n.getChannel("u", "v")));
 	}
 
-	// Unexpected done: should only receive done from notified neighbours
+	// Unexpected DONE: should only receive DONE from neighbours where NOTIFY was sent
 	// Initiator
 	@Test
 	void receiveTest3() {
@@ -188,7 +258,7 @@ class BrachaTouegProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> v.receive(new DoneMessage(), n.getChannel("x", "v")));
 	}
 
-	// Double done: should only receive a single one from every notified neighbour
+	// Double DONE: should only receive a single one from every NOTIFYed neighbour
 	// Initiator
 	@Test
 	void receiveTest5() {
@@ -214,7 +284,7 @@ class BrachaTouegProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> v.receive(new DoneMessage(), n.getChannel("w", "v")));
 	}
 
-	// Unexpected ack: should only receive ack from granted neighbours
+	// Unexpected ACK: should only receive ACK from neighbours where GRANT was sent
 	// Initiator
 	@Test
 	void receiveTest7() {
@@ -240,7 +310,7 @@ class BrachaTouegProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> x.receive(new AckMessage(), n.getChannel("v", "x")));
 	}
 
-	// Double ack: should only receive a single ack from every granted neighbour
+	// Double ACK: should only receive a single ACK from every GRANTed neighbour
 	// Initiator
 	@Test
 	void receiveTest9() {
@@ -266,8 +336,19 @@ class BrachaTouegProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> x.receive(new AckMessage(), n.getChannel("u", "x")));
 	}
 
+
+	/**
+	 * Handling normal messages and decisions about deadlock.
+	 * The first group of tests are all for the initiator,
+	 * the second group for the non-initiators.
+	 */
+
 	// ===== Initiator =====
-	// Receive notify, return done
+	/**
+	 * receiveTest11:
+	 * If the initiator receives NOTIFY, it should return DONE
+	 * because the initiator is already busy with the algorithm.
+	 */
 	@Test
 	void receiveTest11() {
 		Network n = network2();
@@ -284,7 +365,15 @@ class BrachaTouegProcessTest {
 		assertTrue(n.getChannel("u", "v").getContent().iterator().next() instanceof DoneMessage);
 	}
 
-	// Terminate: deadlock
+	/**
+	 * receiveTest12:
+	 * The algorithm terminates: the initiator
+	 * should correctly decide that there is a deadlock.
+	 * Note that Test network 2 itself is not deadlocked,
+	 * we just "fake" reactions from other processes that would not
+	 * occour if the algorithm were run normally with correct
+	 * implementations for the non-initiators.
+	 */
 	@Test
 	void receiveTest12() {
 		Network n = network2();
@@ -304,7 +393,11 @@ class BrachaTouegProcessTest {
 		assertEquals("false", getPrinted(u).iterator().next());
 	}
 
-	// Terminate: free
+	/**
+	 * receiveTest13:
+	 * The algorithm terminates: the initiator
+	 * should correctly decide that there is no deadlock.
+	 */
 	@Test
 	void receiveTest13() {
 		Network n = network2();
@@ -325,7 +418,11 @@ class BrachaTouegProcessTest {
 		assertEquals("true", getPrinted(u).iterator().next());
 	}
 
-	// Receive grants
+	/**
+	 * receiveTest14:
+	 * The initiator should correctly manage GRANT messages
+	 * according to the rules of the algorithm.
+	 */
 	@Test
 	void receiveTest14() {
 		Network n = network1();
@@ -357,7 +454,12 @@ class BrachaTouegProcessTest {
 		assertTrue(n.getChannel("u", "v").getContent().toArray()[2] instanceof AckMessage);
 	}
 
-	// Receive ack
+	/**
+	 * receiveTest15:
+	 * The initiator should correctly manage ACK messages
+	 * according to the rules of the algorithm.
+	 * Note that we use a modified version of test network 1.
+	 */
 	@Test
 	void receiveTest15() {
 		Network n = network1();
@@ -391,7 +493,11 @@ class BrachaTouegProcessTest {
 	}
 
 	// ===== Non-initiator =====
-	// Receive notify
+	/**
+	 * receiveTest16:
+	 * If a non-initiator receives NOTIFY, it should react
+	 * according to the rules of the algorithm.
+	 */
 	@Test
 	void receiveTest16() {
 		Network n = network1();
@@ -436,7 +542,11 @@ class BrachaTouegProcessTest {
 		assertEquals(1, n.getChannel("x", "w").getContent().size());
 	}
 
-	// Receive done
+	/**
+	 * receiveTest17:
+	 * If a non-initiator receives DONE, it should react
+	 * according to the rules of the algorithm.
+	 */
 	@Test
 	void receiveTest17() {
 		Network n = network2();
@@ -480,7 +590,11 @@ class BrachaTouegProcessTest {
 		assertTrue(n.getChannel("w", "u").getContent().toArray()[0] instanceof DoneMessage);
 	}
 
-	// Receive grant
+	/**
+	 * receiveTest18:
+	 * If a non-initiator receives GRANT, it should react
+	 * according to the rules of the algorithm.
+	 */
 	@Test
 	void receiveTest18() {
 		Network n = network1();
@@ -514,7 +628,11 @@ class BrachaTouegProcessTest {
 		assertTrue(n.getChannel("v", "w").getContent().toArray()[2] instanceof AckMessage);
 	}
 
-	// Receive ack
+	/**
+	 * receiveTest19:
+	 * If a non-initiator receives ACK, it should react
+	 * according to the rules of the algorithm.
+	 */
 	@Test
 	void receiveTest19() {
 		Network n = network1();
@@ -528,11 +646,11 @@ class BrachaTouegProcessTest {
 		receiveOrCatch(v, new NotifyMessage(), n.getChannel("w", "v"));
 		assertEquals(1, n.getChannel("v", "u").getContent().size());
 		assertEquals(1, n.getChannel("v", "x").getContent().size());
-		
+
 		// v receives grant from u: should ack u
 		receiveOrCatch(v, new GrantMessage(), n.getChannel("u", "v"));
 		assertEquals(2, n.getChannel("v", "u").getContent().size());
-		
+
 		// v receives grant from x: should grant u,w
 		receiveOrCatch(v, new GrantMessage(), n.getChannel("x", "v"));
 		assertEquals(3, n.getChannel("v", "u").getContent().size());
@@ -548,23 +666,30 @@ class BrachaTouegProcessTest {
 		assertTrue(n.getChannel("v", "x").getContent().toArray()[1] instanceof AckMessage);
 	}
 
-	// ===== Simulations =====
-	// Network 1 should deadlock
+	// ===== Full simulations of the algorithm =====
+
+	/**
+	 * simulationTest1:
+	 * Test network 1 should return deadlock (false = not free).
+	 */
 	@Test
 	void simulationTest1() {
 		Map<String, Collection<String>> output = new HashMap<String, Collection<String>>();
-		
+
 		try {
 			assertTrue(network1().simulate(output));
 		} catch (IllegalReceiveException e) {
 			assertTrue(false);
 		}
-		
+
 		assertEquals(1, output.get("u").size());
 		assertEquals("false", output.get("u").iterator().next());
 	}
 
-	// Network 2 should be free
+	/**
+	 * simulationTest2:
+	 * Test network 2 should return NO deadlock (true = free).
+	 */
 	@Test
 	void simulationTest2() {
 		Map<String, Collection<String>> output = new HashMap<String, Collection<String>>();
@@ -579,7 +704,10 @@ class BrachaTouegProcessTest {
 		assertEquals("true", output.get("u").iterator().next());
 	}
 
-	// Network 3 should be free
+	/**
+	 * simulationTest3:
+	 * Test network 3 should return NO deadlock (true = free).
+	 */
 	@Test
 	void simulationTest3() {
 		Map<String, Collection<String>> output = new HashMap<String, Collection<String>>();
@@ -594,7 +722,10 @@ class BrachaTouegProcessTest {
 		assertEquals("true", output.get("u").iterator().next());
 	}
 
-	// Network 4 should be free
+	/**
+	 * simulationTest4:
+	 * Test network 4 should return NO deadlock (true = free).
+	 */
 	@Test
 	void simulationTest4() {
 		Map<String, Collection<String>> output = new HashMap<String, Collection<String>>();
@@ -607,5 +738,92 @@ class BrachaTouegProcessTest {
 
 		assertEquals(1, output.get("u").size());
 		assertEquals("true", output.get("u").iterator().next());
+	}
+
+	/**
+	 * We run a simulation, but explicitly check that
+	 * each message is correctly reacted upon.
+	 * We use Test network 5 with u as initiator.
+	 * At the end, process u should be aware
+	 * that there is no deadlock.
+	 * 
+	 * Test by Guillaume Coigniez
+	 */
+	@Test
+	void extraDetailedSimulationTest1() {
+		Network n = network5();
+
+		BrachaTouegProcess u = (BrachaTouegProcess) n.getProcess("u");
+		BrachaTouegProcess v = (BrachaTouegProcess) n.getProcess("v");
+		BrachaTouegProcess w = (BrachaTouegProcess) n.getProcess("w");
+		BrachaTouegProcess x = (BrachaTouegProcess) n.getProcess("x");
+
+		u.init();
+
+		// u sends notify to v,x
+		assertTrue(n.getChannel("u", "v").getContent().iterator().next() instanceof NotifyMessage);
+		assertTrue(n.getChannel("u", "x").getContent().iterator().next() instanceof NotifyMessage);
+
+		receiveOrCatch(v, new NotifyMessage(), n.getChannel("u", "v"));
+		receiveOrCatch(x, new NotifyMessage(), n.getChannel("u", "x"));
+
+		// v notifies w
+		assertTrue(n.getChannel("v", "w").getContent().iterator().next() instanceof NotifyMessage);
+		receiveOrCatch(w, new NotifyMessage(), n.getChannel("v", "w"));
+
+		// x grants u,w
+		assertTrue(n.getChannel("x", "u").getContent().iterator().next() instanceof GrantMessage);
+		assertTrue(n.getChannel("x", "w").getContent().iterator().next() instanceof GrantMessage);
+
+		receiveOrCatch(u, new GrantMessage(), n.getChannel("x", "u"));
+		receiveOrCatch(w, new GrantMessage(), n.getChannel("x", "w"));
+
+		// w notifies x
+		assertTrue(n.getChannel("w", "x").getContent().iterator().next() instanceof NotifyMessage);
+		receiveOrCatch(x, new NotifyMessage(), n.getChannel("w", "x"));
+
+		// x sends done to w
+		assertTrue(n.getChannel("x", "w").getContent().toArray()[1] instanceof DoneMessage);
+		receiveOrCatch(w, new DoneMessage(), n.getChannel("x", "w"));
+
+		// u acks x
+		assertTrue(n.getChannel("u", "x").getContent().toArray()[1] instanceof AckMessage);
+		receiveOrCatch(x, new AckMessage(), n.getChannel("u", "x"));
+
+		// w grants v
+		assertTrue(n.getChannel("w", "v").getContent().iterator().next() instanceof GrantMessage);
+		receiveOrCatch(v, new GrantMessage(), n.getChannel("w", "v"));
+
+		// v grants u
+		assertTrue(n.getChannel("v", "u").getContent().iterator().next() instanceof GrantMessage);
+		receiveOrCatch(u, new GrantMessage(), n.getChannel("v", "u"));
+
+		// u acks v
+		assertTrue(n.getChannel("u", "v").getContent().toArray()[1] instanceof AckMessage);
+		receiveOrCatch(v, new AckMessage(), n.getChannel("u", "v"));
+
+		// v acks w
+		assertTrue(n.getChannel("v", "w").getContent().toArray()[1] instanceof AckMessage);
+		receiveOrCatch(w, new AckMessage(), n.getChannel("v", "w"));
+
+		// w acks x
+		assertTrue(n.getChannel("w", "x").getContent().toArray()[1] instanceof AckMessage);
+		receiveOrCatch(x, new AckMessage(), n.getChannel("w", "x"));
+
+		// w sends done to v
+		assertTrue(n.getChannel("w", "v").getContent().toArray()[1] instanceof DoneMessage);
+		receiveOrCatch(v, new DoneMessage(), n.getChannel("w", "v"));
+
+		// v sends done to u
+		assertTrue(n.getChannel("v", "u").getContent().toArray()[1] instanceof DoneMessage);
+		receiveOrCatch(u, new DoneMessage(), n.getChannel("v", "u"));
+
+		// x sends done to u
+		assertTrue(n.getChannel("x", "u").getContent().toArray()[1] instanceof DoneMessage);
+		receiveOrCatch(u, new DoneMessage(), n.getChannel("x", "u"));
+
+		// check if u indeed terminated and saw that there is no deadlock
+		assertEquals(1, getPrinted(u).size());
+		assertEquals("true", getPrinted(u).iterator().next());
 	}
 }

@@ -15,8 +15,11 @@ import framework.Message;
 import framework.Network;
 
 class LaiYangProcessTest {
-	
-	// Initiated initiator should send messages
+
+	/**
+	 * initTest1:
+	 * The initiator should send control messages on its outgoing channels.
+	 */
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -34,7 +37,11 @@ class LaiYangProcessTest {
 		assertTrue(pr.iterator().next() instanceof LaiYangControlMessage);
 	}
 
-	// Initiated non-initiators should not send messages
+	/**
+	 * initTest2:
+	 * Non-initiators must not send any control message
+	 * until they first receive one.
+	 */
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -47,7 +54,11 @@ class LaiYangProcessTest {
 		assertEquals(0, n.getChannel("q", "r").getContent().size());
 	}
 
-	// Throw exception on illegal message type
+	/**
+	 * receiveTest1:
+	 * Receiving an unsupported Message type must be rejected.
+	 * Expects IllegalReceiveException on Message.DUMMY.
+	 */
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -62,7 +73,11 @@ class LaiYangProcessTest {
 	}
 
 	// ===== Control messages =====
-	// Throw exception on double receive of control message
+	/**
+	 * receiveTest2:
+	 * Receiving a second control message from the same neighbor is illegal.
+	 * Expects IllegalReceiveException on duplicate message.
+	 */
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -74,7 +89,11 @@ class LaiYangProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new LaiYangControlMessage(0), n.getChannel("q", "p")));
 	}
 
-	// Throw exception on receive of control message when finished
+	/**
+	 * receiveTest3:
+	 * After a process has completed its snapshot, any further control messages
+	 * must be rejected. Verifies exception on post-completion message receives.
+	 */
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -89,7 +108,11 @@ class LaiYangProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new LaiYangControlMessage(0), n.getChannel("q", "p")));
 	}
 
-	// If not started, start on control message
+	/**
+	 * receiveTest4:
+	 * On first control message receipt, process should
+	 * start the snapshot.
+	 */
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -103,7 +126,11 @@ class LaiYangProcessTest {
 		assertTrue(q.hasStarted());
 	}
 
-	// If not received all control messages, do not finish
+	/**
+	 * receiveTest5:
+	 * Without having received all control messages, the snapshot is not yet complete.
+	 * Verifies process remains active and does not finalize.
+	 */
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -117,7 +144,11 @@ class LaiYangProcessTest {
 		assertFalse(p.hasFinished());
 	}
 
-	// If received all control messages but not all corresponding basic messages, do not finish
+	/**
+	 * receiveTest6:
+	 * If all control messages have been received, but not all corresponding basic messages,
+	 * the snapshot cannot finish yet.
+	 */
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -134,7 +165,11 @@ class LaiYangProcessTest {
 		assertFalse(p.hasFinished());
 	}
 
-	// If received all control messages and all corresponding basic messages, finish
+	/**
+	 * receiveTest7:
+	 * If all control messages and all corresponding basic messages have
+	 * been received, the process should finalize the snapshot.
+	 */
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -151,8 +186,10 @@ class LaiYangProcessTest {
 		assertTrue(p.hasFinished());
 	}
 
-	// If received all control messages and all corresponding basic messages, finish
-	// (Bigger example)
+	/**
+	 * receiveTest8:
+	 * Same as receiveTest7, just a bigger example including basic messages
+	 */
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -161,10 +198,10 @@ class LaiYangProcessTest {
 		p.init();
 
 		assertFalse(p.hasFinished());
-		
+
 		receiveOrCatch(p, new LaiYangBasicMessage("papa smurf", false), n.getChannel("r", "p"));
 		assertFalse(p.hasFinished());
-		
+
 		receiveOrCatch(p, new LaiYangBasicMessage("smurfette", false), n.getChannel("r", "p"));
 		assertFalse(p.hasFinished());
 
@@ -175,8 +212,10 @@ class LaiYangProcessTest {
 		assertTrue(p.hasFinished());
 	}
 
-	// If received all control messages and all corresponding basic messages, finish
-	// (Bigger example)
+	/**
+	 * receiveTest9:
+	 * Same as receiveTest7 and 8, even more basic messages
+	 */
 	@Test
 	void receiveTest9() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -191,13 +230,13 @@ class LaiYangProcessTest {
 
 		receiveOrCatch(p, new LaiYangBasicMessage("jokey smurf", true), n.getChannel("q", "p"));
 		assertFalse(p.hasFinished());
-		
+
 		receiveOrCatch(p, new LaiYangBasicMessage("hefty smurf", false), n.getChannel("r", "p"));
 		assertFalse(p.hasFinished());
 
 		receiveOrCatch(p, new LaiYangBasicMessage("grouchy smurf", true), n.getChannel("r", "p"));
 		assertFalse(p.hasFinished());
-		
+
 		receiveOrCatch(p, new LaiYangBasicMessage("brainy smurf", false), n.getChannel("r", "p"));
 		assertFalse(p.hasFinished());
 
@@ -206,7 +245,11 @@ class LaiYangProcessTest {
 	}
 
 	// ===== Basic messages =====
-	// If tag true and not started, start
+	/**
+	 * receiveTest10:
+	 * If a message arrives with the "True" tag before snapshot start,
+	 * the process should start the snapshot immediately.
+	 */
 	@Test
 	void receiveTest10() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -220,7 +263,11 @@ class LaiYangProcessTest {
 		assertTrue(q.hasStarted());
 	}
 
-	// If tag false and not started, do not start
+	/**
+	 * receiveTest11:
+	 * If a message arrives with the "False" tag before snapshot start,
+	 * the process should *not* start the snapshot.
+	 */
 	@Test
 	void receiveTest11() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -234,7 +281,11 @@ class LaiYangProcessTest {
 		assertFalse(q.hasStarted());
 	}
 
-	// If tag false and finished, throw exception
+	/**
+	 * receiveTest12:
+	 * After snapshot completion, any further "False"-tagged messages
+	 * must be rejected. Expects IllegalReceiveException.
+	 */
 	@Test
 	void receiveTest12() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -249,7 +300,11 @@ class LaiYangProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new LaiYangBasicMessage("vanity smurf", false), n.getChannel("q", "p")));
 	}
 
-	// If tag false and did not receive all control messages, do not finish
+	/**
+	 * receiveTest13:
+	 * If still waiting for control messages on some channels,
+	 * receiving a "False"-tagged message should not complete snapshot.
+	 */
 	@Test
 	void receiveTest13() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -266,7 +321,11 @@ class LaiYangProcessTest {
 		assertFalse(p.hasFinished());
 	}
 
-	// If tag false, did receive all control messages but not all corresponding basic messages, do not finish
+	/**
+	 * receiveTest14:
+	 * If all control messages have been received, but not all basic messages,
+	 * the process should *not* finish the snapshot upon receipt of a "False"-tagged message.
+	 */
 	@Test
 	void receiveTest14() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -286,7 +345,11 @@ class LaiYangProcessTest {
 		assertFalse(p.hasFinished());
 	}
 
-	// If tag false, did receive all control messages and all corresponding basic messages, finish
+	/**
+	 * receiveTest15:
+	 * If all control messages have been received, and also all basic messages,
+	 * the process should finish the snapshot upon receipt of a "False"-tagged message.
+	 */
 	@Test
 	void receiveTest15() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -301,7 +364,7 @@ class LaiYangProcessTest {
 
 		receiveOrCatch(p, new LaiYangBasicMessage("lazy smurf", true), n.getChannel("q", "p"));
 		assertFalse(p.hasFinished());
-		
+
 		receiveOrCatch(p, new LaiYangBasicMessage("farmer smurf", false), n.getChannel("r", "p"));
 		assertFalse(p.hasFinished());
 
@@ -310,12 +373,16 @@ class LaiYangProcessTest {
 
 		receiveOrCatch(p, new LaiYangControlMessage(2), n.getChannel("r", "p"));
 		assertFalse(p.hasFinished());
-		
+
 		receiveOrCatch(p, new LaiYangBasicMessage("painter smurf", false), n.getChannel("r", "p"));
 		assertTrue(p.hasFinished());
 	}
 
-	// If tag true and not started, do not record
+	/**
+	 * receiveTest16:
+	 * While the snapshot has not been started yet, basic messages should not be recorded.
+	 * Confirms no channel-state logging before tag flip.
+	 */
 	@Test
 	void receiveTest16() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -330,7 +397,10 @@ class LaiYangProcessTest {
 		assertEquals(0, q.getChannelState(n.getChannel("p", "q")).size());
 	}
 
-	// If tag true and started, do not record
+	/**
+	 * receiveTest17:
+	 * If tag true and started, do not record
+	 */
 	@Test
 	void receiveTest17() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();
@@ -345,7 +415,10 @@ class LaiYangProcessTest {
 		assertEquals(0, p.getChannelState(n.getChannel("q", "p")).size());
 	}
 
-	// If tag false and not started, do not record
+	/**
+	 * receiveTest18:
+	 * If tag false and not started, do not record
+	 */
 	@Test
 	void receiveTest18() {
 		Network n = Network.parse(true, "p:week34.LaiYangInitiator q,r:week34.LaiYangNonInitiator").makeComplete();

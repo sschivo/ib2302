@@ -15,8 +15,13 @@ import framework.Message;
 import framework.Network;
 
 class ChandyLamportProcessTest {
-	
-	// Initiated initiator should send messages
+
+	/**
+	 * initTest1:
+	 * As the designated initiator, upon init() p should broadcast
+	 * a control (marker) message to every outgoing channel.
+	 * Verifies all other processes receive exactly one marker.
+	 */
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -34,7 +39,11 @@ class ChandyLamportProcessTest {
 		assertTrue(pr.iterator().next() instanceof ChandyLamportControlMessage);
 	}
 
-	// Initiated non-initiators should not send messages
+	/**
+	 * initTest2:
+	 * Non-initiator processes must not send any markers on init().
+	 * Ensures only the initiator kick-starts the snapshot.
+	 */
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -47,7 +56,11 @@ class ChandyLamportProcessTest {
 		assertEquals(0, n.getChannel("q", "r").getContent().size());
 	}
 
-	// Throw exception on illegal message type
+	/**
+	 * receiveTest1:
+	 * Passing an unsupported Message (e.g. Message.DUMMY) should be rejected.
+	 * Expects IllegalReceiveException on any invalid receive().
+	 */
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -62,7 +75,11 @@ class ChandyLamportProcessTest {
 	}
 
 	// ===== Control messages =====
-	// Throw exception on double receive of control message
+	/**
+	 * receiveTest2:
+	 * Receiving the same control marker twice from one neighbor is illegal.
+	 * Expects IllegalReceiveException on the second marker from the same channel.
+	 */
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -74,7 +91,11 @@ class ChandyLamportProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new ChandyLamportControlMessage(), n.getChannel("q", "p")));
 	}
 
-	// Throw exception on receive of control message when finished
+	/**
+	 * receiveTest3:
+	 * Once a process has completed its snapshot, further control markers
+	 * must be rejected. Verifies exception when receiving marker post-completion.
+	 */
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -89,7 +110,11 @@ class ChandyLamportProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new ChandyLamportControlMessage(), n.getChannel("q", "p")));
 	}
 
-	// If not started, start on control message
+	/**
+	 * receiveTest4:
+	 * Before any marker arrives, basic application messages should not be recorded.
+	 * Confirms that only after the first marker does state-capture begin.
+	 */
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -103,7 +128,12 @@ class ChandyLamportProcessTest {
 		assertTrue(q.hasStarted());
 	}
 
-	// If received all control messages, finish
+	/**
+	 * receiveTest5:
+	 * After receiving markers on all incoming channels,
+	 * the process finalizes its snapshot and enters "finished" state.
+	 * Verifies that no further markers are expected and channel states are frozen.
+	 */
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -121,7 +151,11 @@ class ChandyLamportProcessTest {
 	}
 
 	// ===== Basic messages =====
-	// If not started, do not record basic message
+	/**
+	 * receiveTest6:
+	 * While snapshot not started, basic messages on channels must be ignored
+	 * (not treated as in-transit). Ensures no channel element is recorded prematurely.
+	 */
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -135,7 +169,11 @@ class ChandyLamportProcessTest {
 		assertEquals(0, q.getChannelState(n.getChannel("p", "q")).size());
 	}
 
-	// If finished, do not record basic message
+	/**
+	 * receiveTest7:
+	 * After snapshot completion, subsequent basic messages must not be recorded.
+	 * Confirms that channel content remains unchanged post-snapshot.
+	 */
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();
@@ -150,7 +188,12 @@ class ChandyLamportProcessTest {
 		assertEquals(0, p.getChannelState(n.getChannel("q", "p")).size());
 	}
 
-	// If received corresponding control message, do not record basic message
+	/**
+	 * receiveTest8:
+	 * Upon receiving a marker on a channel whose marker was already processed,
+	 * subsequent basic messages on that channel should not be recorded.
+	 * Verifies per-channel "once only" recording rule.
+	 */
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true, "p:week34.ChandyLamportInitiator q,r:week34.ChandyLamportNonInitiator").makeComplete();

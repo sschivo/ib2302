@@ -7,6 +7,13 @@ import java.util.Map;
 import framework.Network;
 import framework.Process;
 
+/**
+ * This class defines the expected results of the three
+ * test cases for Lamport's Clock.
+ * For the definition of the test cases, see class
+ * LogicalClockTest.
+ */
+
 class LamportsClockTest extends LogicalClockTest<Integer> {
 
 	@Override
@@ -14,6 +21,10 @@ class LamportsClockTest extends LogicalClockTest<Integer> {
 		return new LamportsClock(sequences);
 	}
 
+	/**
+	 * Test case 1: see the solution to exercise II-1a
+	 * of the exercises on Chapter 2.
+	 */
 	@Override
 	Map<Event, Integer> testConstructor1_expected(Network n) {
 		Map<Event, Integer> expected = new HashMap<>();
@@ -30,7 +41,11 @@ class LamportsClockTest extends LogicalClockTest<Integer> {
 		expected.put(Event.parse("e@r", n), 6);
 		return expected;
 	}
-	
+
+	/**
+	 * Test case 2: see the solution to exercise II-2a
+	 * of the exercises on Chapter 2.
+	 */
 	@Override
 	Map<Event, Integer> testConstructor2_expected(Network n) {
 		Map<Event, Integer> expected = new HashMap<>();
@@ -47,7 +62,11 @@ class LamportsClockTest extends LogicalClockTest<Integer> {
 		expected.put(Event.parse("r(p,r,3)", n), 5);
 		return expected;
 	}
-	
+
+	/**
+	 * Test case 3: see the solution to exercise II-3a
+	 * of the exercises on Chapter 2.
+	 */
 	@Override
 	Map<Event, Integer> testConstructor3_expected(Network n) {
 		Map<Event, Integer> expected = new HashMap<>();

@@ -17,9 +17,18 @@ import framework.Message;
 import framework.Network;
 import framework.Process;
 
+/**
+ * Tests the base version of the Rock-Paper-Scissors protocol.
+ */
+
 class RockPaperScissorsProcessTest {
 
-	// Process should send messages on init (n = 3)
+	/**
+	 * initTest1:
+	 * Verifies that when running with 3 players (p, q, r),
+	 * process p broadcasts exactly one RockPaperScissorsMessage to each other player upon initialization.
+	 * Checks that each outgoing channel from p contains exactly one message.
+	 */
 	@Test
 	void initTest1() {
 		Network n = Network.parse(false, "p,q,r:week1.RockPaperScissorsProcess").makeComplete();
@@ -31,7 +40,12 @@ class RockPaperScissorsProcessTest {
 		assertEquals(1, n.getChannel("p", "r").getContent().size());
 	}
 
-	// Process should send RPSmessages on init (n = 100)
+	/**
+	 * initTest2:
+	 * Verifies that in a network of 100 processes, the starting process (p0)
+	 * broadcasts one RockPaperScissorsMessage to each of the other 99 processes on init.
+	 * Ensures the outgoing channels from p0 each contain exactly one message of the correct type.
+	 */
 	@Test
 	void initTest2() {
 		Network n = new Network(false);
@@ -50,7 +64,12 @@ class RockPaperScissorsProcessTest {
 		}
 	}
 
-	// Handling of proper receive events
+	/**
+	 * receiveTest1:
+	 * After initialization in a 4-player game (p, q, r, s),
+	 * receiving a single RockPaperScissorsMessage from one peer should not yet trigger output,
+	 * because the process waits to receive one message from all other processes before deciding.
+	 */
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(false, "p,q,r,s:week1.RockPaperScissorsProcess").makeComplete();
@@ -73,7 +92,12 @@ class RockPaperScissorsProcessTest {
 		assertEquals("true true", printed.get(0));
 	}
 
-	// Should throw exception on double receive from the same process (n = 2)
+	/**
+	 * receiveTest2:
+	 * In a 2-player game (p, q), after p receives one valid message from q,
+	 * a second attempt to receive another message from q should result in an IllegalReceiveException,
+	 * preventing duplicate receives from the same sender.
+	 */
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(false, "p,q:week1.RockPaperScissorsProcess").makeComplete();
@@ -86,7 +110,12 @@ class RockPaperScissorsProcessTest {
 				() -> p.receive(new RockPaperScissorsMessage(Item.PAPER), n.getChannel("q", "p")));
 	}
 
-	// Should throw exception on double receive from the same process (n = 3)
+	/**
+	 * receiveTest3:
+	 * In a 3-player game (p, q, r), after p receives one valid message from q,
+	 * attempting to receive another message from q again should throw IllegalReceiveException,
+	 * ensuring each sender is accepted only once per round.
+	 */
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(false, "p,q,r:week1.RockPaperScissorsProcess").makeComplete();
@@ -99,7 +128,12 @@ class RockPaperScissorsProcessTest {
 				() -> p.receive(new RockPaperScissorsMessage(Item.PAPER), n.getChannel("q", "p")));
 	}
 
-	// Should throw exception on receiving illegal message type
+	/**
+	 * receiveTest4:
+	 * In a 2-player game (p, q), attempts to receive a dummy (invalid) Message type
+	 * should throw IllegalReceiveException immediately,
+	 * enforcing strict type checking of incoming messages.
+	 */
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(false, "p,q:week1.RockPaperScissorsProcess").makeComplete();
@@ -110,7 +144,13 @@ class RockPaperScissorsProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("q", "p")));
 	}
 
-	// Simulate a full run (n = 10)
+	/**
+	 * simulationTest1:
+	 * Runs a full game simulation among 10 processes labeled p0–p9,
+	 * each choosing and then receiving all others' moves.
+	 * Expects the overall simulation to terminate successfully and each process to output exactly one decision.
+	 * Verifies that each printed result is one of the four possible outcomes: true/false combinations.
+	 */
 	@Test
 	void simulationTest1() {
 		Network n = new Network(false);

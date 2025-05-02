@@ -17,9 +17,19 @@ import framework.Message;
 import framework.Network;
 import framework.Process;
 
+/**
+ * Tests the cheating variant: each process adapts its next move to beat
+ * the majority of opponents' last choices.
+ */
+
 class RockPaperScissorsCheatingProcessTest {
 
-	// Outgoing channels should be empty after initialisation
+	/**
+	 * initTest1:
+	 * At start (n=2), before any receives, the cheating process should
+	 * not send any messages by itself.
+	 * Verifies all outgoing channels are initially empty until first receive.
+	 */
 	@Test
 	void initTest1() {
 		Network n = Network.parse(false, "p,q,r,s:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -32,7 +42,11 @@ class RockPaperScissorsCheatingProcessTest {
 		assertEquals(0, n.getChannel("p", "s").getContent().size());
 	}
 
-	// Should throw exception on receiving twice from the same process (n = 2)
+	/**
+	 * receiveTest1:
+	 * In a 2-player game, two receives from the same peer are illegal.
+	 * Expects IllegalReceiveException on the second receive() call.
+	 */
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(false, "p,q:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -45,7 +59,12 @@ class RockPaperScissorsCheatingProcessTest {
 				() -> p.receive(new RockPaperScissorsMessage(Item.PAPER), n.getChannel("q", "p")));
 	}
 
-	// Should throw exception on receiving twice from the same process (n = 3)
+	/**
+	 * receiveTest2:
+	 * Same as receiveTest1 but with 3 players in the network.
+	 * Confirms duplicate receives from one sender are always rejected,
+	 * regardless of total player count.
+	 */
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(false, "p,q,r:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -58,7 +77,11 @@ class RockPaperScissorsCheatingProcessTest {
 				() -> p.receive(new RockPaperScissorsMessage(Item.PAPER), n.getChannel("q", "p")));
 	}
 
-	// Should throw exception on receiving illegal message type
+	/**
+	 * receiveTest3:
+	 * Receiving an unsupported Message type should be rejected immediately.
+	 * Expects IllegalReceiveException when passing Message.DUMMY.
+	 */
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(false, "p,q:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -69,7 +92,12 @@ class RockPaperScissorsCheatingProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("q", "p")));
 	}
 
-	// When receiving ROCK (n = 2), should return PAPER and win
+	/**
+	 * receiveTest4:
+	 * In a 2-player match where q first plays ROCK,
+	 * the cheating process should respond with PAPER (win), then terminate.
+	 * Checks that exactly one message is sent and p prints "true false".
+	 */
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(false, "p,q:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -87,7 +115,11 @@ class RockPaperScissorsCheatingProcessTest {
 		assertEquals("true false", printed.get(0));
 	}
 
-	// When receiving PAPER (n = 2), should return SCISSORS and win
+	/**
+	 * receiveTest5:
+	 * Similar to receiveTest4 but when q plays PAPER,
+	 * p should counter with SCISSORS (win) and then terminate.
+	 */
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(false, "p,q:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -105,7 +137,11 @@ class RockPaperScissorsCheatingProcessTest {
 		assertEquals("true false", printed.get(0));
 	}
 
-	// When receiving SCISSORS (n = 2), should return ROCK and win
+	/**
+	 * receiveTest6:
+	 * Similar to receiveTest4 but when q plays SCISSORS,
+	 * p should counter with ROCK (win) and then terminate.
+	 */
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(false, "p,q:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -123,7 +159,12 @@ class RockPaperScissorsCheatingProcessTest {
 		assertEquals("true false", printed.get(0));
 	}
 
-	// When receiving ROCK and PAPER (n = 3), should return anything but ROCK and thus not lose
+	/**
+	 * receiveTest7:
+	 * In a 3-player game, if q and r play ROCK and PAPER,
+	 * p should choose a move that doesn't lose (anything but ROCK).
+	 * Verifies p remains in the game when a clear winning move is unavailable.
+	 */
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(false, "p,q,r:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -145,7 +186,11 @@ class RockPaperScissorsCheatingProcessTest {
 		assertFalse("false true" == printed.get(0));
 	}
 
-	// When receiving ROCK and SCISSORS (n = 3), should return anything but SCISSORS and thus not lose
+	/**
+	 * receiveTest8:
+	 * In a 3-player game, if opponents play ROCK and SCISSORS,
+	 * p should not pick SCISSORS (to avoid losing).
+	 */
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(false, "p,q,r:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -167,7 +212,11 @@ class RockPaperScissorsCheatingProcessTest {
 		assertFalse("false true" == printed.get(0));
 	}
 
-	// When receiving SCISSORS and PAPER (n = 3), should return anything but PAPER and thus not lose
+	/**
+	 * receiveTest9:
+	 * In a 3-player game, if opponents play SCISSORS and PAPER,
+	 * p avoids PAPER to prevent losing.
+	 */
 	@Test
 	void receiveTest9() {
 		Network n = Network.parse(false, "p,q,r:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -189,7 +238,12 @@ class RockPaperScissorsCheatingProcessTest {
 		assertFalse("false true" == printed.get(0));
 	}
 
-	// When receiving ROCK, PAPER and SCISSORS (n = 4), should not win or lose
+	/**
+	 * receiveTest10:
+	 * In a 4-player game (ROCK, PAPER, SCISSORS from q,r,s),
+	 * no single move guarantees a win.
+	 * Expects p to pick any move and finish without losing.
+	 */
 	@Test
 	void receiveTest10() {
 		Network n = Network.parse(false, "p,q,r,s:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -206,7 +260,12 @@ class RockPaperScissorsCheatingProcessTest {
 		assertEquals("true true", printed.get(0));
 	}
 
-	// Should only send messages after receiving from all opponents
+	/**
+	 * receiveTest11:
+	 * Verifies that p only begins cheating/responding
+	 * after it has received exactly one move from every opponent.
+	 * Channels should remain empty until the final receive triggers reply.
+	 */
 	@Test
 	void receiveTest11() {
 		Network n = Network.parse(false, "p,q,r,s:week1.RockPaperScissorsCheatingProcess").makeComplete();
@@ -230,7 +289,12 @@ class RockPaperScissorsCheatingProcessTest {
 		assertEquals(1, n.getChannel("p", "s").getContent().size());
 	}
 
-	// Simulate full run (n = 7)
+	/**
+	 * simulationTest1:
+	 * Simulates one cheater (p) against 6 honest players.
+	 * Expects all honest players to terminate with some result,
+	 * and p to never lose ("false false" or "false true" are prohibited).
+	 */
 	@Test
 	void simulationTest1() {
 		Network n = Network.parse(false, "p:week1.RockPaperScissorsCheatingProcess");
@@ -263,7 +327,12 @@ class RockPaperScissorsCheatingProcessTest {
 		assertNotEquals("false true", pres);
 	}
 
-	// Simulate full run (n = 4, two cheaters)
+	/**
+	 * simulationTest2:
+	 * Simulates two cheaters (p and q) among 4 total processes.
+	 * Since the cheaters wait on each other indefinitely,
+	 * the protocol should deadlock and produce no output.
+	 */
 	@Test
 	void simulationTest2() {
 		Network n = Network.parse(false, "p,q:week1.RockPaperScissorsCheatingProcess r,s:week1.RockPaperScissorsProcess").makeComplete();

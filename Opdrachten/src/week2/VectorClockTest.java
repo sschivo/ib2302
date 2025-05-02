@@ -7,6 +7,13 @@ import java.util.Map;
 import framework.Network;
 import framework.Process;
 
+/**
+ * This class defines the expected results of the three
+ * test cases for the Vector Clock.
+ * For the definition of the test cases, see class
+ * LogicalClockTest.
+ */
+
 class VectorClockTest extends LogicalClockTest<Map<Process, Integer>> {
 
 	@Override
@@ -14,6 +21,10 @@ class VectorClockTest extends LogicalClockTest<Map<Process, Integer>> {
 		return new VectorClock(sequences);
 	}
 
+	/**
+	 * Test case 1: see the solution to exercise II-1b
+	 * of the exercises on Chapter 2.
+	 */
 	@Override
 	Map<Event, Map<Process, Integer>> testConstructor1_expected(Network n) {
 		Map<Event, Map<Process, Integer>> expected = new HashMap<>();
@@ -30,7 +41,11 @@ class VectorClockTest extends LogicalClockTest<Map<Process, Integer>> {
 		expected.put(Event.parse("e@r", n), VectorClock.parseTimestamp("2,0,4", n));
 		return expected;
 	}
-	
+
+	/**
+	 * Test case 2: see the solution to exercise II-2b
+	 * of the exercises on Chapter 2.
+	 */
 	@Override
 	Map<Event, Map<Process, Integer>> testConstructor2_expected(Network n) {
 		Map<Event, Map<Process, Integer>> expected = new HashMap<>();
@@ -47,7 +62,11 @@ class VectorClockTest extends LogicalClockTest<Map<Process, Integer>> {
 		expected.put(Event.parse("r(p,r,3)", n), VectorClock.parseTimestamp("3,1,3", n));
 		return expected;
 	}
-	
+
+	/**
+	 * Test case 3: see the solution to exercise II-3b
+	 * of the exercises on Chapter 2.
+	 */
 	@Override
 	Map<Event, Map<Process, Integer>> testConstructor3_expected(Network n) {
 		Map<Event, Map<Process, Integer>> expected = new HashMap<>();

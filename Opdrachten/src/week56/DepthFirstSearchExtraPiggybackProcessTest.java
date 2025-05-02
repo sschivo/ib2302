@@ -17,7 +17,11 @@ import framework.Network;
 
 class DepthFirstSearchExtraPiggybackProcessTest {
 
-	// Initiator should not finish and should send a single token with its own ID on init
+	/**
+	 * initTest1:
+	 * On init() the initiator should send a TOKEN piggybacking its own ID
+	 * to one neighbor and remain active.
+	 */
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true,
@@ -48,7 +52,10 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertEquals(1, sum);
 	}
 
-	// Non-initiator should not finish and should not send anything on init
+	/**
+	 * initTest2:
+	 * Non-initiator should not finish and should not send anything on init
+	 */
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true,
@@ -66,7 +73,10 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		}
 	}
 
-	// Initiator illegal message type: throw exception
+	/**
+	 * receiveTest1:
+	 * The initiator receives an illegal message type: throw exception
+	 */
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true,
@@ -79,7 +89,10 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("q", "p")));
 	}
 
-	// Non-initiator illegal message type: throw exception
+	/**
+	 * receiveTest2:
+	 * A non-initiator receives an illegal message type: throw exception
+	 */
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true,
@@ -92,7 +105,10 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(Message.DUMMY, n.getChannel("p", "q")));
 	}
 
-	// Initiator receives token when finished: throw exception
+	/**
+	 * receiveTest3:
+	 * The initiator receives a TOKEN when finished: throw exception
+	 */
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true,
@@ -113,7 +129,10 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(m, n.getChannel("q", "p")));
 	}
 
-	// Non-initiator receives token when finished: throw exception
+	/**
+	 * receiveTest4:
+	 * A non-initiator receives a TOKEN when finished: throw exception
+	 */
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true,
@@ -134,7 +153,11 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(m, n.getChannel("p", "q")));
 	}
 
-	// Non-initiator should start on first receive
+	/**
+	 * receiveTest5:
+	 * On first valid TOKEN receipt, non-initiator starts DFS,
+	 * piggybacks its ID on the outgoing TOKEN.
+	 */
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true,
@@ -152,7 +175,12 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertTrue(q.isActive());
 	}
 
-	// Non-initiator should piggyback its ID
+	/**
+	 * receiveTest6:
+	 * A non-initiator should piggyback its ID,
+	 * and send the TOKEN to a neighbour
+	 * (we don't check here if visited or not).
+	 */
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true,
@@ -184,7 +212,11 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		}
 	}
 
-	// Initiator should forward to unvisited
+	/**
+	 * receiveTest7:
+	 * Differently from receiveTest6, here we do check that the TOKEN is sent
+	 * to a neighbour that has not been visited yet.
+	 */
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true,
@@ -204,12 +236,12 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 			TokenWithIdsMessage m = new TokenWithIdsMessage("p");
 			m.addId("q");
 			m.addId("r");
-			
+
 			receiveOrCatch(p, m, n.getChannel("q", "p"));
 			assertEquals(pqsize, n.getChannel("p", "q").getContent().size());
 			assertEquals(prsize, n.getChannel("p", "r").getContent().size());
 			assertEquals(pssize + 1, n.getChannel("p", "s").getContent().size());
-			
+
 			assertTrue(n.getChannel("p", "s").getContent().toArray()[0] instanceof TokenWithIdsMessage);
 			Set<String> visited = ((TokenWithIdsMessage) n.getChannel("p", "s").getContent().toArray()[0]).getIds();
 			assertEquals(3, visited.size());
@@ -217,18 +249,18 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 			assertTrue(visited.contains("q"));
 			assertTrue(visited.contains("r"));
 		}
-		
+
 		// If p sent to s, return token with IDs p,q,s: p should forward to r
 		if (pssize == 1) {
 			TokenWithIdsMessage m = new TokenWithIdsMessage("p");
 			m.addId("q");
 			m.addId("s");
-			
+
 			receiveOrCatch(p, m, n.getChannel("q", "p"));
 			assertEquals(pqsize, n.getChannel("p", "q").getContent().size());
 			assertEquals(pssize, n.getChannel("p", "s").getContent().size());
 			assertEquals(prsize + 1, n.getChannel("p", "r").getContent().size());
-			
+
 			assertTrue(n.getChannel("p", "r").getContent().toArray()[0] instanceof TokenWithIdsMessage);
 			Set<String> visited = ((TokenWithIdsMessage) n.getChannel("p", "r").getContent().toArray()[0]).getIds();
 			assertEquals(3, visited.size());
@@ -238,7 +270,11 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		}
 	}
 
-	// Non-initiator should forward to unvisited (non-parent)
+	/**
+	 * receiveTest8:
+	 * Non-initiators should forward to unvisited processes,
+	 * if any non-parent processes have not yet been visited.
+	 */
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true,
@@ -258,7 +294,11 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertEquals(1, n.getChannel("q", "s").getContent().size());
 	}
 
-	// Non-initiator should return to parent when there is no other option
+	/**
+	 * receiveTest9:
+	 * Only if all neighbours have already been visited,
+	 * return the TOKEN to the parent.
+	 */
 	@Test
 	void receiveTest9() {
 		Network n = Network.parse(true,
@@ -281,7 +321,11 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertTrue(qp.getContent().iterator().next() instanceof TokenWithIdsMessage);
 	}
 
-	// Initiator should finish normally
+	/**
+	 * receiveTest10:
+	 * When the exploration is complete, the initiator should finish normally
+	 * and not send any other control message.
+	 */
 	@Test
 	void receiveTest10() {
 		Network n = Network.parse(true,
@@ -312,7 +356,12 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertEquals(pssize, n.getChannel("p", "s").getContent().size());
 	}
 
-	// Non-initiator should finish normally
+	/**
+	 * receiveTest11:
+	 * A non-initiator should also finish normally
+	 * (we don't check the return TOKEN here, for that
+	 * see receiveTest9)
+	 */
 	@Test
 	void receiveTest11() {
 		Network n = Network.parse(true,
@@ -333,7 +382,12 @@ class DepthFirstSearchExtraPiggybackProcessTest {
 		assertTrue(q.isPassive());
 	}
 
-	// Simulate full run
+	/**
+	 * simulationTest1:
+	 * Simulate a full run of the algorithm on a network with
+	 * one initiator and 15 non-initiators.
+	 * All processes should be finished at the end.
+	 */
 	@Test
 	void simulationTest1() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraPiggybackInitiator");

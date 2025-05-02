@@ -17,7 +17,13 @@ import framework.Channel;
 import framework.Network;
 
 class DepthFirstSearchExtraControlProcessTest {
-	// Initiator initiates (n > 2): should broadcast info messages to all but one neighbours and should not finish
+
+	/**
+	 * initTest1:
+	 * In the initiator (with more than 2 processes),
+	 * init() should send an INFO message
+	 * to all neighbors except one (the chosen child).
+	 */
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator");
@@ -43,7 +49,11 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertEquals(37, sum);
 	}
 
-	// Initiator initiates (n = 2): should just send the token and should not finish
+	/**
+	 * initTest2:
+	 * In a 2-node network, the initiator should send only the TOKEN
+	 * to its neighbor and remain active without sending INFO messages.
+	 */
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -58,7 +68,11 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertTrue(n.getChannel("p", "q").getContent().iterator().next() instanceof TokenMessage);
 	}
 
-	// Non-initiator should not send anything on init and should not finish
+	/**
+	 * initTest3:
+	 * Non-initiators must not send any messages on init()
+	 * and must stay active until they first receive the token.
+	 */
 	@Test
 	void initTest3() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -74,7 +88,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		}
 	}
 
-	// Initiator receives illegal message type: throw exception
+	/**
+	 * receiveTest1:
+	 * Receiving an invalid message type must throw IllegalReceiveException.
+	 */
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -85,7 +102,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("q", "p")));
 	}
 
-	// Non-initiator receives illegal message type: throw exception
+	/**
+	 * receiveTest2:
+	 * Non-initiator receiving invalid message type also throws.
+	 */
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -96,7 +116,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(Message.DUMMY, n.getChannel("p", "q")));
 	}
 
-	// Initiator receives token when finished: throw exception
+	/**
+	 * receiveTest3:
+	 * Initiator receiving TOKEN after finishing: exception.
+	 */
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator");
@@ -127,7 +150,7 @@ class DepthFirstSearchExtraControlProcessTest {
 				receiveOrCatch(p, new InfoMessage(), n.getChannel("q" + i, "p"));
 			}
 		}
-		
+
 		// Receive token back from child
 		receiveOrCatch(p, new TokenMessage(), n.getChannel("q" + child, "p"));
 
@@ -136,7 +159,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new TokenMessage(), n.getChannel("q17", "p")));
 	}
 
-	// Non-initiator receives token when finished: throw exception
+	/**
+	 * receiveTest4:
+	 * Non-initiator receiving TOKEN after finishing: exception.
+	 */
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -157,7 +183,12 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(new TokenMessage(), n.getChannel("p", "q")));
 	}
 
-	// Non-initiator receives first token: should not finish (n > 2)
+	/**
+	 * receiveTest5:
+	 * With more than two processes in the network,
+	 * on first TOKEN receive, non-initiator should not finish
+	 * (need to send INFO to all other neighbors).
+	 */
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -171,7 +202,13 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertFalse(q.isPassive());
 	}
 
-	// Non-initiator receives first token: should broadcast info messages
+
+	/**
+	 * receiveTest6:
+	 * With more than two processes in the network,
+	 * on first TOKEN receive, non-initiator should
+	 * broadcast INFO to all other neighbors.
+	 */
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -197,7 +234,13 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertFalse(q.isPassive());
 	}
 
-	// Non-initiator receives first token: should just forward token if no broadcast needed
+	/**
+	 * receiveTest7:
+	 * With more than two processes in the network,
+	 * on first TOKEN receive, non-initiator should
+	 * directly forward the token if no INFO broadcast
+	 * is needed.
+	 */
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -218,7 +261,12 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertFalse(q.isPassive());
 	}
 
-	// Non-initiator receives first token: return to parent and finish (if applicable)
+	/**
+	 * receiveTest8:
+	 * On first TOKEN receive, non-initiator that
+	 * can find no candidate for a child should
+	 * return the TOKEN to the parent, then finish.
+	 */
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -239,7 +287,14 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertTrue(n.getChannel("q", "p").getContent().iterator().next() instanceof TokenMessage);
 	}
 
-	// Initiator receives token: should forward when applicable
+	/**
+	 * receiveTest9:
+	 * Initiator has chosen a child, and sent all INFO messages,
+	 * as well as the TOKEN to the child.
+	 * All ACK have been received.
+	 * When the TOKEN is received from the current child: a new
+	 * child must be chosen among the available candidates.
+	 */
 	@Test
 	void receiveTest9() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator");
@@ -285,7 +340,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		}
 	}
 
-	// Non-initiator receives token: should forward when applicable
+	/**
+	 * receiveTest10:
+	 * Non-initiator receives TOKEN: should forward when applicable
+	 */
 	@Test
 	void receiveTest10() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator");
@@ -313,7 +371,7 @@ class DepthFirstSearchExtraControlProcessTest {
 			}
 		}
 		assertEquals(1, children.size());
-		
+
 		// Should forward on receive
 		for (int j = 0; j < 50; j++) {
 			// Receive token from the last child
@@ -334,7 +392,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		}
 	}
 
-	// Initiator receives token: should finish when applicable
+	/**
+	 * receiveTest11:
+	 * Initiator receives TOKEN: should finish when applicable
+	 */
 	@Test
 	void receiveTest11() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator");
@@ -376,7 +437,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertTrue(p.isPassive());
 	}
 
-	// Non-initiator receives token: return to parent and finish when applicable
+	/**
+	 * receiveTest12:
+	 * Non-initiator receives TOKEN: return to parent and finish when applicable
+	 */
 	@Test
 	void receiveTest12() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -408,7 +472,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertTrue(n.getChannel("q", "p").getContent().iterator().next() instanceof TokenMessage);
 	}
 
-	// Initiator receives info: should return ack
+	/**
+	 * receiveTest13:
+	 * Initiator receives INFO: should return ACK
+	 */
 	@Test
 	void receiveTest13() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator");
@@ -433,7 +500,7 @@ class DepthFirstSearchExtraControlProcessTest {
 				child = i;
 			}
 		}
-		
+
 		assertEquals(1, n.getChannel("p", "q" + nonchild).getContent().size());
 
 		// Receive info from chosen non-child. Should return ack.
@@ -443,7 +510,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertTrue(n.getChannel("p", "q" + nonchild).getContent().toArray()[1] instanceof AckMessage);
 	}
 
-	// Non-initiator receives info: should return ack
+	/**
+	 * receiveTest14:
+	 * Non-initiator receives INFO: should return ACK
+	 */
 	@Test
 	void receiveTest14() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -459,7 +529,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertTrue(n.getChannel("q", "r").getContent().iterator().next() instanceof AckMessage);
 	}
 
-	// Initiator receives illegal ack: throw exception
+	/**
+	 * receiveTest15:
+	 * Initiator receives unexpected ACK: should throw exception
+	 */
 	@Test
 	void receiveTest15() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -491,7 +564,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new AckMessage(), n.getChannel(fNonchild, "p")));
 	}
 
-	// Non-initiator receives illegal ack: throw exception
+	/**
+	 * receiveTest16:
+	 * Non-initiator receives unexpected ACK: should throw exception
+	 */
 	@Test
 	void receiveTest16() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -507,7 +583,7 @@ class DepthFirstSearchExtraControlProcessTest {
 			nonchild = "s";
 		}
 
-		// Should not receive ack from parent p
+		// Should not receive unexpected ack
 		assertThrows(IllegalReceiveException.class, () -> q.receive(new AckMessage(), n.getChannel("p", "q")));
 
 		// Should not receive two acks from chosen non-child
@@ -516,7 +592,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(new AckMessage(), n.getChannel(fNonchild, "q")));
 	}
 
-	// Initiator should wait for acks and then send token to child
+	/**
+	 * receiveTest17:
+	 * Initiator should first wait for all ACKs, and then send TOKEN to child
+	 */
 	@Test
 	void receiveTest17() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -551,7 +630,10 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertTrue(n.getChannel("p", child).getContent().iterator().next() instanceof TokenMessage);
 	}
 
-	// Non-initiator should wait for acks and then send token to child
+	/**
+	 * receiveTest18:
+	 * Non-initiator should wait for all ACKs, and then send TOKEN to child
+	 */
 	@Test
 	void receiveTest18() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator q,r,s,t:week56.DepthFirstSearchExtraControlNonInitiator").makeComplete();
@@ -588,7 +670,11 @@ class DepthFirstSearchExtraControlProcessTest {
 		assertTrue(n.getChannel("q", child).getContent().iterator().next() instanceof TokenMessage);
 	}
 
-	// Simulate full run
+	/**
+	 * simulationTest1:
+	 * Simulate a full run of the protocol.
+	 * All processes should be finished at the end.
+	 */
 	@Test
 	void simulationTest1() {
 		Network n = Network.parse(true, "p:week56.DepthFirstSearchExtraControlInitiator");

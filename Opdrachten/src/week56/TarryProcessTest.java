@@ -15,8 +15,12 @@ import framework.Channel;
 import framework.Network;
 
 class TarryProcessTest {
-	
-	// Initiator should not finish and should send a single token on init
+
+	/**
+	 * initTest1:
+	 * The initiator does not immediately terminate,
+	 * and sends the first TOKEN (and exactly one TOKEN).
+	 */
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -39,7 +43,11 @@ class TarryProcessTest {
 		assertEquals(1, sum);
 	}
 
-	// Non-initiators should not finish and should not send anything on init
+	/**
+	 * initTest2:
+	 * Any non-initiator does not immediately terminate,
+	 * and cannot (yet) send any TOKEN.
+	 */
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -57,7 +65,11 @@ class TarryProcessTest {
 		assertEquals(0, sum);
 	}
 
-	// Initiator illegal message type: throw exception
+	/**
+	 * receiveTest1:
+	 * Invalid message type causes IllegalReceiveException.
+	 * (Initiator)
+	 */
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -68,7 +80,12 @@ class TarryProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("r", "p")));
 	}
 
-	// Initiator receives token, but not from all neighbours: forward token
+	/**
+	 * receiveTest2:
+	 * Initiator receives TOKEN, but not all neighbours
+	 * have already sent it.
+	 * Must forward the TOKEN to another neighbour. 
+	 */
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -101,7 +118,12 @@ class TarryProcessTest {
 		assertEquals(2, sum);
 	}
 
-	// Initiator receives token, but not from all neighbours: do not finish
+	/**
+	 * receiveTest3:
+	 * Initiator receives TOKEN, but not all neighbours
+	 * have already sent it.
+	 * Must not finish now. 
+	 */
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -118,7 +140,11 @@ class TarryProcessTest {
 		assertFalse(p.isPassive());
 	}
 
-	// Initiator does not forward through the same channel twice
+	/**
+	 * receiveTest4:
+	 * Do now forward through the same channel twice.
+	 * (Initiator)
+	 */
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator");
@@ -147,7 +173,7 @@ class TarryProcessTest {
 			assertEquals(i + 1, sum);
 		}
 
-		// Every outgoing channel from p should contain exactly one token
+		// Every outgoing channel from p should contain exactly one token (and exactly one)
 		Collection<Message> pout;
 		for (Channel d : p.getOutgoing()) {
 			pout = d.getContent();
@@ -158,7 +184,11 @@ class TarryProcessTest {
 		}
 	}
 
-	// Initiator receives token from all neighbours: finish
+	/**
+	 * receiveTest5:
+	 * Initiator receives TOKEN from each neighbour,
+	 * so it must finish now. 
+	 */
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -178,7 +208,11 @@ class TarryProcessTest {
 		assertTrue(p.isPassive());
 	}
 
-	// Initiator receives when finished: throw exception
+	/**
+	 * receiveTest6:
+	 * Initiator receives TOKEN, but has already finished:
+	 * must throw exception. 
+	 */
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -194,7 +228,11 @@ class TarryProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new TokenMessage(), n.getChannel("q", "p")));
 	}
 
-	// Non-initiator illegal message type: throw exception
+	/**
+	 * receiveTest7:
+	 * Invalid message type causes IllegalReceiveException.
+	 * (Non-initiator)
+	 */
 	@Test
 	void receiveTest7() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -205,7 +243,12 @@ class TarryProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(Message.DUMMY, n.getChannel("r", "q")));
 	}
 
-	// Non-initiator receives, but not from all neighbours: forward
+	/**
+	 * receiveTest8:
+	 * Non-initiator receives TOKEN, but not all neighbours
+	 * have already sent it.
+	 * Must forward the TOKEN to another neighbour. 
+	 */
 	@Test
 	void receiveTest8() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -246,7 +289,12 @@ class TarryProcessTest {
 		}
 	}
 
-	// Non-initiator receives, but not from all neighbours: do not finish
+	/**
+	 * receiveTest9:
+	 * Non-initiator receives TOKEN, but not all neighbours
+	 * have already sent it.
+	 * Must not finish now. 
+	 */
 	@Test
 	void receiveTest9() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -264,7 +312,11 @@ class TarryProcessTest {
 		assertFalse(q.isPassive());
 	}
 
-	// Non-initiator does not forward through the same channel twice
+	/**
+	 * receiveTest10:
+	 * Do now forward through the same channel twice.
+	 * (Non-initiator)
+	 */
 	@Test
 	void receiveTest10() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator");
@@ -299,7 +351,11 @@ class TarryProcessTest {
 		}
 	}
 
-	// Non-initiator only forwards to parent if only option
+	/**
+	 * receiveTest11:
+	 * A non-initiator can forward to its parent only
+	 * if it is the only option left.
+	 */
 	@Test
 	void receiveTest11() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator");
@@ -322,7 +378,11 @@ class TarryProcessTest {
 		assertEquals(1, n.getChannel("q0", "p").getContent().size());
 	}
 
-	// Non-initiator receives from all neighbours: finish
+	/**
+	 * receiveTest12:
+	 * Non-initiator receives TOKEN from each neighbour,
+	 * so it must finish now. 
+	 */
 	@Test
 	void receiveTest12() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator");
@@ -345,7 +405,11 @@ class TarryProcessTest {
 		assertTrue(q.isPassive());
 	}
 
-	// Non-initiator receives when finished: throw exception
+	/**
+	 * receiveTest13:
+	 * Non-initiator receives TOKEN, but has already finished:
+	 * must throw exception. 
+	 */
 	@Test
 	void receiveTest13() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator q,r,s:week56.TarryNonInitiator").makeComplete();
@@ -361,7 +425,11 @@ class TarryProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(new TokenMessage(), n.getChannel("r", "q")));
 	}
 
-	// Simulate full run
+	/**
+	 * simulationTest1:
+	 * Do a full simulation of the algorithm.
+	 * All processes should be finished at the end.
+	 */
 	@Test
 	void simulationTest1() {
 		Network n = Network.parse(true, "p:week56.TarryInitiator");

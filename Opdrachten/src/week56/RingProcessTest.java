@@ -15,7 +15,11 @@ import framework.Network;
 
 class RingProcessTest {
 
-	// Initiator should not finish and should send a message on init
+	/**
+	 * initTest1:
+	 * The initiator does not immediately terminate,
+	 * and sends exactly one TOKEN to its clockwise neighbor.
+	 */
 	@Test
 	void initTest1() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -31,7 +35,11 @@ class RingProcessTest {
 		assertTrue(pq.iterator().next() instanceof TokenMessage);
 	}
 
-	// Non-initiator should not finish and should not send a message on init
+	/**
+	 * initTest2:
+	 * Any non-initiator does not immediately terminate,
+	 * and cannot (yet) send any TOKEN.
+	 */
 	@Test
 	void initTest2() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -45,7 +53,11 @@ class RingProcessTest {
 		assertEquals(0, qr.size());
 	}
 
-	// Initiator illegal message type: throw exception
+	/**
+	 * receiveTest1:
+	 * Invalid message type causes IllegalReceiveException.
+	 * (Initiator)
+	 */
 	@Test
 	void receiveTest1() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -56,7 +68,11 @@ class RingProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(Message.DUMMY, n.getChannel("r", "p")));
 	}
 
-	// Initiator double receive: throw exception
+	/**
+	 * receiveTest2:
+	 * Duplicate TOKEN from the same neighbor should be rejected.
+	 * (Initiator)
+	 */
 	@Test
 	void receiveTest2() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -68,7 +84,10 @@ class RingProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> p.receive(new TokenMessage(), n.getChannel("r", "p")));
 	}
 
-	// Initiator legal receive: finish
+	/**
+	 * receiveTest3:
+	 * Initiator receives the TOKEN: finish.
+	 */
 	@Test
 	void receiveTest3() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -83,7 +102,11 @@ class RingProcessTest {
 		assertTrue(p.isPassive());
 	}
 
-	// Non-initiator illegal message type: throw exception
+	/**
+	 * receiveTest4:
+	 * Invalid message type causes IllegalReceiveException.
+	 * (Non-initiator)
+	 */
 	@Test
 	void receiveTest4() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -94,7 +117,11 @@ class RingProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(Message.DUMMY, n.getChannel("p", "q")));
 	}
 
-	// Non-initiator double receive: throw exception
+	/**
+	 * receiveTest5:
+	 * Duplicate TOKEN from the same neighbor should be rejected.
+	 * (Non-initiator)
+	 */
 	@Test
 	void receiveTest5() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -106,7 +133,10 @@ class RingProcessTest {
 		assertThrows(IllegalReceiveException.class, () -> q.receive(new TokenMessage(), n.getChannel("p", "q")));
 	}
 
-	// Non-initiator legal receive: start and finish
+	/**
+	 * receiveTest6:
+	 * On valid receive, non‐initiator forwards the TOKEN and then finishes.
+	 */
 	@Test
 	void receiveTest6() {
 		Network n = Network.parse(true, "p:week56.RingInitiator q,r:week56.RingNonInitiator p->q q->r r->p");
@@ -123,7 +153,11 @@ class RingProcessTest {
 		assertTrue(q.isPassive());
 	}
 
-	// Simulate full run
+	/**
+	 * simulationTest1:
+	 * Do a full simulation of the algorithm.
+	 * All processes should be finished at the end.
+	 */
 	@Test
 	void simulationTest1() {
 		Network n = Network.parse(true, "p:week56.RingInitiator");

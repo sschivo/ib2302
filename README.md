@@ -30,7 +30,8 @@ Per inschrijving heeft de student drie inleverpogingen. Als na de derde inleverp
 
 ### Virtual machine (VM)
 
-Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) aan. Het doel van de VM is om alle studenten te laten werken met hetzelfde besturingssysteem, dezelfde versie van Java, en dezelfde versie van Eclipse; dit maakt het oplossen van problemen door de docent, zodra de VM is geinstalleerd is (hieronder beschreven), een stuk eenvoudiger voor zowel de student als de docent. Hoewel sterk aangeraden, is het niet verplicht om de VM te gebruiken. Echter, de docent biedt geen ondersteuning bij installatie en configuratie van de benodigde tools (Java SDK, Eclipse, ``git``) buiten de VM.
+Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) aan. Het doel van de VM is om alle studenten te laten werken met hetzelfde besturingssysteem, dezelfde versie van Java, en dezelfde versie van Eclipse; dit maakt het oplossen van problemen door de docent, zodra de VM is geinstalleerd is (hieronder beschreven), een stuk eenvoudiger voor zowel de student als de docent. Hoewel aangeraden, is het niet verplicht om de VM te gebruiken.
+Ook als de VM bij jou niet werkt (bijvoorbeeld, ARM-gebaseerd computers), zou het niet moeilijk moeten zijn om Eclipse en Git werkend te krijgen. Vragen hierover kunnen in de Discussies in Brightspace worden gesteld.
 
  1. Download en installeer [VirtualBox](https://www.virtualbox.org).
  1. Download de [virtual machine](https://openuniversiteit-my.sharepoint.com/:u:/g/personal/ssc_ou_nl/EV2zYWHzEhJIvF7RqJGjj_YBntjRxCoxyeQygzJ6quXV9w?e=MbS1Dt).
@@ -55,6 +56,14 @@ Voor het maken van de programmeeropdrachten bieden we een virtual machine (VM) a
      1. Bij ``Select root directory``, vul in: ``/home/ou/ib2302/Opdrachten``
      1. Klik: ``Finish``
 
+
+### Geen VM? Lijst van benodigde software
+
+Als de VM niet werkt, of je liever niet met een VM werkt, dan kan je alle software ook self installeren. Dit is wat we in de programmeeropdrachten gebruiken:
+ * ``Java SE`` versie tenminste 1.8 (soms ook bekend als "versie 8")
+ * ``Eclipse IDE`` (de verstrekte code is als Eclipse-project gemaakt)
+ * ``JUnit 5`` om de tests uit te voeren
+ * ``git`` is optioneel: klik op de groene knop ``Code`` boven in deze pagina, dan kies ``Download ZIP`` om een bestand met alle code te downloaden.
 
 
 ## Algemene aanwijzingen
@@ -94,7 +103,7 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 
  * Met uitzondering van Opdracht 2 bestaat elke opdracht uit het schrijven van implementaties van methoden ``init`` en ``receive`` (= implementeren van gedrag dat een proces moet vertonen wanneer init- en ontvang-events plaatsvinden), in subklassen van klasse ``framework.Process``. Gebruik hiervoor als basis de informele beschrijvingen die besproken zijn in de hoorcolleges.
  
- * Het staat de student vrij om&mdash;geheel naar eigen inzicht&mdash;extra attributen, methoden, en zelfs klassen toe te voegen. Echter, testklassen (= alle klassen met een naam van de vorm ``...Test``) en de inhoud van package ``framework`` dienen ongewijzigd te blijven.
+ * Het staat de student vrij om&mdash;geheel naar eigen inzicht&mdash;extra attributen, methoden, en zelfs klassen toe te voegen. Echter, testklassen (= alle klassen met een naam van de vorm ``...Test``) en de inhoud van package ``framework`` **dienen ongewijzigd te blijven**.
  
  * Bij twijfel over de opdrachtomschrijving: bestudeer de unit-tests. Deze bepalen uiteindelijk welk gedrag goed en fout is. **Let op:** dit is geen "testontleedspel": je hoeft niet tegen de unit-tests te vechten totdat je uiteindelijk een pass krijgt! Als je het doel of het verwachte resultaat van een test niet snapt, schrijf dan in de Discussies en vraag de docenten.
 
@@ -104,6 +113,14 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
     * Open de klasse waarin de unit-tests gedefinieerd zijn.
     * Klik: ``Run`` (menubalk) > ``Coverage``
 
+
+### Tips voor het debuggen
+Sommige algoritmen zijn moeilijker te implementeren dan anderen, en het is mogelijk (of zelfs waarschijnlijk) dat je implementatie niet alle tests in één keer slaagt. Hier zijn een aantal punten die nuttig kunnen zijn:
+ * Gebruik de slides en videolessen als referentie, maar vergeet het boek niet: daar staan ook uitleggen en soms zelfs pseudocode.
+ * De functie ``print`` is bedoeld alleen voor de outputs van de algoritmen, wat door die functie wordt geschreven wordt in de tests gecheckt. Als je iets op scherm wil schrijven dat niet door de tests moet worden gelezen, gebruik dan ``System.out.println`` of ``System.out.print``.
+ * Om te zien wat in je code gebeurt kan je breakpoints in Eclipse gebruiken (dubbelklik op een regelnummer), om de executie in een specifieke regel te laten pauzeren. Je kan dan bijvoorbeeld stap-voor-stap door de code lopen, waarden van variabelen inspecteren, enzovoort. Gebruik dan ``Run`` > ``Debug`` in plaats van ``Run`` > ``Coverage`` om de code op deze manier te debuggen.
+ * Sommige tests falen omdat een specifiek bericht in een bepaalde situatie een exception zou moeten leveren: om zulke tests te laten slagen hoef je dus gewoon die gevallen op de gevraagde manier te behandelen.
+ * Als je vast loopt en geen oplossing ziet, kan je ook in de Discussies een vraag stellen.
 
 
 ## Opdracht 1: Steen-Papier-Schaar (week 1)
@@ -146,7 +163,7 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 
  * Dit is een uitbreiding op **1a**; de eerder toegevoegde implementaties van ``init`` en ``receive`` van klasse ``week1.RockPaperScissorsProcess`` kunnen daarom als basis worden genomen (hoewel het aannemelijk is dat aanzienlijke wijzigingen noodzakelijk zijn). Het idee van de uitbreiding is dat elk proces aan het eind van de huidige ronde bepaalt&mdash;op basis van zijn winnaar- en verliezerschap&mdash;of het meedoet aan de volgende ronde. In detail:
      * Als een proces winnaar is in de huidige ronde (= zijn item verslaat het item van minimaal een ander proces), en verliezer (= het item van minimaal een ander proces verslaat zijn item), dan doet het mee aan de volgende ronde.
-     * Als een proces winnaar is in de huidige ronde, maar geen verliezer, dan doet het niet mee aan de volgende ronde (sterker nog: er is geen volgende ronde). In dit geval is het proces winnaar van het hele spel, en print het ``true`` (gebruik methode ``print`` van superklasse ``framework.Process``).
+     * Als een proces winnaar is in de huidige ronde, maar geen verliezer, dan doet het niet mee aan de volgende ronde. In dit geval is het proces winnaar van het hele spel, en print het ``true`` (gebruik methode ``print`` van superklasse ``framework.Process``). Opmerking: het is mogelijk dat meerdere winnaars zijn (voorbeeld met 3 processen: ``p`` en ``q`` kiezen ``Item.ROCK``, ``r`` kiest ``Item.SCISSORS``. Zowel ``p`` als ``q`` zijn winnaars, en ``r`` is de enige die verliest).
      * Als een proces verliezer is in de huidige ronde, maar geen winnaar, dan doet het niet mee aan de volgende ronde. In dit geval is het proces verliezer van het hele spel en print het ``false``. Wanneer het proces in het vervolg een bericht ontvangt, stuurt het datzelfde bericht terug naar de afzender.
      * Als een proces geen verliezer is in de huidige ronde, en geen winnaar, dan doet het mee aan de volgende ronde.
 
@@ -174,6 +191,12 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 **Voldoende/onvoldoende?** Alle unit-tests in klasse ``week2.GlobalTransitionSystemsTest`` dienen te slagen.
 
 **Aanwijzingen:**
+
+ * Het doel van methode ``hasExecution`` is om te vertellen of een gegeven executie (parameter ``sequence``) wel of niet kan worden gevolgd in het gegeven transitie systeem. De tests zijn (deels) gebaseerd op oefenopdrachten die tijdens de werkcolleges worden besproken: zie de slides van de eerste werkcollege om figuren te vinden van die transitie systemen.
+
+ * Een lege executie is niet goed (moet dus ``false`` leveren).
+
+ * Een executie die niet bij de begintoestand begint, of niet in de eindtoestand eindigt, is niet goed.
 
  * Klasse ``week2.Configuration`` is een attribuutloze klasse; elk ``Configuration``-object representeert een configuratie in een globaal transitiesysteem, maar de interne details zijn voor deze opdracht irrelevant (daarom: geen attributen).
 
@@ -203,6 +226,8 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
  * Methode ``CausalOrder`` (constructor) dient attribuut ``pairs`` te vullen met alle causale verbanden die afgeleid kunnen worden van ``sequence``, volgens de twee regels die besproken zijn tijdens Hoorcollege 1. Houdt hierbij de volgende aanvullende eis aan:
     * Als events ``a``, ``b``, en ``c`` plaatsvinden bij hetzelfde proces, bevat de causale ordening ``a``&#8826;``b``, en ``b``&#8826;``c``, maar **niet** ``a``&#8826;``c`` (omdat die laatste in principe kan worden afgeleid van de eerste twee door de [transitieve afsluiting](https://en.wikipedia.org/wiki/Transitive_closure) te berekenen; dit is **geen** onderdeel van deze opdracht).
 
+ * **Tip**: er zijn aparte tests alleen voor ``CausalOrder``: als je klaar bent met de implementatie van de constructor, gebruik al nu de tests om te checken dat ze slagen. Dan kan je verder door met de implementatie van ``toComputation``.
+
  * Methode ``toComputation`` dient de unieke verzameling van **alle** executies (= lijst van events) op te leveren die enkel verschillen in de volgorde van concurrent events, op basis van de paren in de causale ordening, en op basis van parameter ``events`` (om precies te zijn: elke executie is een permutatie van events in ``events``). Performance is hierbij geen evaluatiecriterium; een recursieve brute-force-aanpak is toegestaan.
 
  * Begrip van de code onder de "horizontale lijn" in klasse ``week2.CausalOrder`` (onder methode ``toComputation``) is onnodig voor deze opdracht.
@@ -218,6 +243,8 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
  * Klassen ``week2.LamportsClock`` en ``week2.VectorClock`` zijn subklassen van abstracte klasse ``week2.LogicalClock``. Deze abstracte klasse heeft een attribuut: ``timestamps``. Dit attribuut houdt per event een klokwaarde bij. De klokwaarden zijn van type ``T``. In ``week2.LamportsClock`` is ``T`` geïnstantieerd met ``Integer`` (elke klokwaarde van Lamport's Clock is een getal); in ``week2.VectorClock`` is ``T`` geïnstantieerd met ``Map<Process, Integer>`` (elke klokwaarde van de Vector Clock is een getal voor elk proces; informeel noemt men dit een vector van getallen, maar in Java is dit het makkelijskt te representeren met een ``Map``).
 
   * Methoden ``LamportsClock`` (constructor) en ``VectorClock`` (constructor) dienen attribuut ``timestamps`` (in de superklasse) te vullen volgens de regels van Lamport's Clock en de Vector Clock. Gebruik hiervoor methoden uit de superklasse (in ieder geval ``addTimestamp``; optioneel, naar eigen inzicht, ``containsTimestamp`` en ``getTimestamp``).
+
+ * **Tip**: de klassen ``week2.SendEvent`` en ``week2.ReceiveEvent`` hebben methoden die nuttig kunnen zijn (zie bijv. ``ReceiveEvent.getCorrespondingSendEvent``).
 
  * Begrip van de code onder de "horizontale lijn" in klasse ``week2.VectorClock`` (onder de constructor) is onnodig voor deze opdracht.
 
@@ -259,7 +286,7 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 
  * Neem voor de implementatie van elk proces aan dat hij nul basisberichten heeft verstuurd wanneer het algoritme begint.
 
- * De implementatie van het piggybacken van ``true`` of ``false`` op basisberichten valt buiten deze deelopdracht.
+ * De methode ``LaiYangBasicMessage.getTag`` geeft als ``true`` of ``false`` het gepiggybackte waarde van een basisbericht.
 
  * De laatste drie aanwijzingen bij deelopdracht **3a** zijn ook van toepassing op deze deelopdracht.
 
@@ -335,7 +362,7 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 
 ## Opdracht 5: Deadlock-detectie (week 7-8)
 
-**De opdracht:** Implementeer methoden ``init`` en ``receive`` in klassen ``week78.BrachaTouegProcess``, ``week78.BrachaTouegInitiator``, en ``week78.BrachaTouegNonInitiator``, volgens het Bracha-Toueg-algoritme.
+**De opdracht:** Implementeer methoden ``init`` en ``receive`` in klassen ``week78.BrachaTouegProcess``, ``week78.BrachaTouegInitiator``, en ``week78.BrachaTouegNonInitiator``, volgens het Bracha-Toueg-algoritme. Bij deze opdracht is het **extra nuttig om het boek te gebruiken**: daar staat een uitgebreide uitleg van het algoritme, met pseudocode voor belangrijke gevallen.
 
 **Voldoende/onvoldoende?** Alle unit-tests in klasse ``week78.BrachaTouegProcessTest`` dienen te slagen.
 
@@ -353,6 +380,10 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
 
  * Zorg ervoor dat de implementatie ook om kan gaan met *N*-uit-*M*-verzoeken met 1<*N*<*M*. **NB:** Dit is niet besproken tijdens Hoorcollege 4 (en ook niet in het tekstboek); bedenk de generalisatie zelf (er zijn enkele unit-tests waarin deze situatie zich voordoet).
 
+ * Let op: we vragen hier niet om een multi-threaded programma te schrijven. We bouwen en uitvoeren onze gedistribueerde algoritmen nog steeds op dezelfde manier als in de andere opdrachten.
+
+* **Tip**: zorg ervoor dat je heel goed weet wat een ACK of DONE bericht betekent, en hoe in elke situatie naar zulk bericht moet worden gereageerd. Het is bijvoorbeeld mogelijk dat het ontvangen van een ACK betekent dat een DONE meteen moet worden gestuurd. Het "meteen" sturen van ACK of DONE moet ook goed worden bestudeerd. Nogmaals, zie in het boek de beschrijving van het algoritme en de stukken van pseudocode.
+
 
 
 ## Afronding
@@ -364,6 +395,7 @@ De verstrekte code bestaat uit zes packages: ``week1``, ``week2``, ``week34``, `
     cd /home/ou
     tar -czf ib2302.tar.gz ib2302
     ```
+    Het ``.zip`` formaat is ook prima, als je bijv. de VM niet gebruikt.
 
  2. Op Brightspace, stuur de zojuist gemaakte ``/home/ou/ib2302.tar.gz`` in met het formulier onder ``Cursus`` > ``Inhoud`` > ``Programmeeropdrachten`` > ``Instructie``.
  
