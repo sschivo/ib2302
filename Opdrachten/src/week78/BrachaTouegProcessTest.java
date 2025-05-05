@@ -759,6 +759,9 @@ class BrachaTouegProcessTest {
 		BrachaTouegProcess x = (BrachaTouegProcess) n.getProcess("x");
 
 		u.init();
+		v.init(); //We also call init() for the other processes: they get to do this in a "real" simulation
+		w.init();
+		x.init();
 
 		// u sends notify to v,x
 		assertTrue(n.getChannel("u", "v").getContent().iterator().next() instanceof NotifyMessage);
