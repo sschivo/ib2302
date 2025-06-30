@@ -400,3 +400,17 @@ Sommige algoritmen zijn moeilijker te implementeren dan anderen, en het is mogel
  2. Op Brightspace, stuur de zojuist gemaakte ``/home/ou/ib2302.tar.gz`` in met het formulier onder ``Cursus`` > ``Inhoud`` > ``Programmeeropdrachten`` > ``Instructie``.
  
  3. Het reflectieverslag kan ingestuurd worden via Brighspace ``Cursus`` > ``Inhoud`` > ``Programmeeropdrachten`` > ``Reflectieverslag``.
+
+### Bestanden uit de VM krijgen
+
+De uitwerking kan direct van binnen de VM worden gestuurd met de browser, maar het is ook mogelijk om de uitwerking elders te kopiëren. Om bestanden met de VM te delen, of uit de VM te kopiëren, is het mogelijk om een gedeelde map in VirtualBox in te stellen:
+1. Indien de VM nog draait, stop deze.
+2. Open Instellingen > Gedeelde mappen. Maak een nieuwe gedeelde map aan, met "Mount point" ``/home/ou/<zelf-gekozen-map-naam>`` en Auto-mount. De lokale map kan een nieuwe map zijn die bijvoorbeeld op Documenten of Deskop staat van de eigen computer.
+3. Start de VM weer.
+4. Open een terminal en check dat <zelf-gekozen-map-naam> bestaat (mbv het ``ls`` commando).
+5. Voer de volgende commando's uit in de terminal:
+    ```
+    sudo -i
+    cp /home/ou/ib2302.tar.gz /home/ou/<zelf-gekozen-map-naam>/
+    ```
+Op de lokale map kan het .tar.gz bestand worden gevonden.
