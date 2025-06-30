@@ -407,7 +407,7 @@ De uitwerking kan direct van binnen de VM worden gestuurd met de browser, maar h
 1. Indien de VM nog draait, stop deze.
 2. Open Instellingen > Gedeelde mappen. Maak een nieuwe gedeelde map aan, met "Mount point" ``/home/ou/<zelf-gekozen-map-naam>`` en Auto-mount. De lokale map kan een nieuwe map zijn die bijvoorbeeld op Documenten of Deskop staat van de eigen computer.
 3. Start de VM weer.
-4. Open een terminal en check dat <zelf-gekozen-map-naam> bestaat (mbv het ``ls`` commando).
+4. Open een terminal en check dat de map ``<zelf-gekozen-map-naam>`` bestaat (mbv het ``ls`` commando).
 5. Voer de volgende commando's uit in de terminal:
     ```
     sudo -i
